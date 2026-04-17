@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Insight Clinic Islington — Integrative Health Centre</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #faf7f2;
+      --cream-dark: #f0ebe0;
+      --sage: #6b8f71;
+      --sage-dark: #4a6e50;
+      --sage-light: #e8f0e9;
+      --terra: #c17b5c;
+      --terra-light: #f5e6df;
+      --brown: #2d2016;
+      --brown-light: #6b4c30;
+      --grey: #8a8070;
+      --text: #3a2e22;
+    }
+    body { font-family: 'Inter', sans-serif; color: var(--text); background: var(--cream); }
+    a { text-decoration: none; color: inherit; }
+
+    /* NAV */
+    nav {
+      background: var(--cream); padding: 0 6%;
+      display: flex; align-items: center; justify-content: space-between; height: 76px;
+      border-bottom: 1px solid var(--cream-dark);
+    }
+    .logo { font-family: 'Lora', serif; font-size: 1.4rem; color: var(--brown); }
+    .logo em { color: var(--sage); font-style: normal; }
+    .nav-links { display: flex; gap: 2rem; font-size: 0.9rem; color: var(--grey); }
+    .nav-links a:hover { color: var(--sage-dark); }
+    .nav-cta {
+      background: var(--terra); color: #fff; padding: 0.65rem 1.5rem;
+      border-radius: 30px; font-size: 0.9rem; font-weight: 600;
+    }
+
+    /* HERO */
+    .hero { padding: 5rem 6%; display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+    .hero-label {
+      display: inline-block; background: var(--sage-light); color: var(--sage-dark);
+      padding: 0.35rem 1rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 {
+      font-family: 'Lora', serif; font-size: 3.4rem; line-height: 1.2;
+      color: var(--brown); margin-bottom: 1.2rem;
+    }
+    .hero h1 em { color: var(--terra); font-style: normal; }
+    .hero p { color: var(--grey); font-size: 1.05rem; line-height: 1.8; margin-bottom: 2rem; max-width: 480px; }
+    .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 2.5rem; }
+    .btn-terra {
+      background: var(--terra); color: #fff; padding: 0.9rem 2rem;
+      border-radius: 30px; font-weight: 600; font-size: 1rem; transition: all 0.2s;
+    }
+    .btn-terra:hover { background: #b06a4b; transform: translateY(-1px); }
+    .btn-ghost {
+      border: 1.5px solid var(--brown-light); color: var(--brown-light); padding: 0.9rem 2rem;
+      border-radius: 30px; font-weight: 500; font-size: 1rem;
+    }
+    .btn-ghost:hover { background: var(--cream-dark); }
+    .hero-trust { display: flex; align-items: center; gap: 1.5rem; }
+    .hero-trust .rating { font-size: 1.8rem; font-weight: 700; color: var(--brown); }
+    .hero-trust .stars { color: #d4a017; font-size: 0.9rem; }
+    .hero-trust .rating-text { font-size: 0.85rem; color: var(--grey); }
+    .divider-v { width: 1px; height: 36px; background: var(--cream-dark); }
+    .trust-certs { font-size: 0.85rem; color: var(--grey); }
+
+    /* HERO VISUAL */
+    .hero-visual { position: relative; }
+    .hero-card {
+      background: var(--white, #fff); border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(45,32,22,0.12); overflow: hidden;
+    }
+    .hero-card-img {
+      aspect-ratio: 4/3; background: linear-gradient(135deg, var(--sage-light), var(--cream-dark));
+      display: flex; align-items: center; justify-content: center;
+      color: var(--grey); font-size: 0.9rem;
+    }
+    .hero-card-foot { padding: 1.2rem 1.5rem; display: flex; align-items: center; gap: 1rem; }
+    .dot-online { width: 8px; height: 8px; border-radius: 50%; background: #4caf50; }
+    .hero-card-foot p { font-size: 0.85rem; color: var(--grey); }
+    .hero-card-foot strong { color: var(--brown); }
+    .hero-float {
+      position: absolute; bottom: -20px; left: -24px;
+      background: #fff; border-radius: 14px; padding: 1rem 1.2rem;
+      box-shadow: 0 8px 30px rgba(45,32,22,0.12); font-size: 0.85rem; color: var(--grey);
+    }
+    .hero-float strong { display: block; color: var(--brown); margin-top: 0.2rem; font-size: 1rem; }
+
+    /* SECTION BASE */
+    section { padding: 5rem 6%; }
+    .label { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--terra); margin-bottom: 0.75rem; }
+    h2.serif { font-family: 'Lora', serif; font-size: 2.4rem; line-height: 1.25; color: var(--brown); margin-bottom: 1rem; }
+    .sub { font-size: 1rem; color: var(--grey); line-height: 1.75; max-width: 580px; }
+
+    /* JOURNEY SECTION */
+    .journey { background: var(--cream-dark); }
+    .journey-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+    .journey-steps { margin-top: 2.5rem; }
+    .jstep { display: flex; gap: 1.5rem; margin-bottom: 2rem; }
+    .jstep-num {
+      width: 36px; height: 36px; border-radius: 50%; background: var(--sage);
+      color: #fff; font-weight: 700; font-size: 0.9rem;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .jstep h4 { color: var(--brown); font-weight: 600; margin-bottom: 0.3rem; }
+    .jstep p { font-size: 0.9rem; color: var(--grey); line-height: 1.6; }
+    .journey-quote {
+      background: var(--sage); border-radius: 20px; padding: 2.5rem; color: #fff;
+    }
+    .journey-quote blockquote {
+      font-family: 'Lora', serif; font-size: 1.5rem; line-height: 1.55; margin-bottom: 1.5rem;
+    }
+    .journey-quote .patient { font-size: 0.9rem; opacity: 0.8; }
+    .stars-sm { color: #ffd700; margin-bottom: 0.75rem; }
+
+    /* CONDITIONS */
+    .cond-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 2.5rem; }
+    .cond-item {
+      background: #fff; border-radius: 12px; padding: 1.2rem 1.5rem;
+      display: flex; align-items: center; gap: 1rem;
+      border: 1px solid var(--cream-dark); transition: all 0.2s;
+    }
+    .cond-item:hover { border-color: var(--sage); transform: translateX(4px); }
+    .cond-icon { font-size: 1.5rem; }
+    .cond-item strong { display: block; font-weight: 600; color: var(--brown); font-size: 0.95rem; }
+    .cond-item span { font-size: 0.82rem; color: var(--grey); }
+
+    /* SERVICES */
+    .services { background: var(--sage-dark); }
+    .services .label { color: #a8d5b0; }
+    .services h2.serif { color: #fff; }
+    .services .sub { color: rgba(255,255,255,0.7); }
+    .serv-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3rem; }
+    .serv-card {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 16px; padding: 2rem; transition: all 0.2s;
+    }
+    .serv-card:hover { background: rgba(255,255,255,0.15); }
+    .serv-card .icon { font-size: 2.2rem; margin-bottom: 1rem; }
+    .serv-card h3 { color: #fff; font-weight: 600; margin-bottom: 0.5rem; }
+    .serv-card p { color: rgba(255,255,255,0.7); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1rem; }
+    .serv-card a { color: #a8d5b0; font-size: 0.85rem; font-weight: 600; }
+
+    /* TESTIMONIALS */
+    .testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3rem; }
+    .tcard {
+      background: #fff; border-radius: 16px; padding: 2rem;
+      border: 1px solid var(--cream-dark);
+    }
+    .tcard blockquote { font-size: 0.95rem; color: var(--grey); line-height: 1.75; font-style: italic; margin: 0.75rem 0 1.2rem; }
+    .tcard .author strong { color: var(--brown); font-size: 0.9rem; }
+    .tcard .author span { color: var(--grey); font-size: 0.82rem; }
+
+    /* LEAD MAGNET */
+    .magnet-wrap { background: var(--terra-light); border-radius: 20px; padding: 3.5rem; display: grid; grid-template-columns: 1fr auto; gap: 3rem; align-items: center; margin: 0 6%; }
+    .magnet-wrap h2 { font-family: 'Lora', serif; font-size: 2rem; color: var(--brown); margin-bottom: 0.75rem; }
+    .magnet-wrap p { color: var(--grey); margin-bottom: 1.5rem; line-height: 1.7; }
+    .magnet-form { display: flex; gap: 0.75rem; }
+    .magnet-form input { padding: 0.8rem 1.2rem; border-radius: 30px; border: 1.5px solid var(--cream-dark); font-size: 0.95rem; flex: 1; outline: none; background: #fff; }
+    .magnet-form input:focus { border-color: var(--terra); }
+    .magnet-form button { background: var(--terra); color: #fff; padding: 0.8rem 1.5rem; border-radius: 30px; border: none; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .magnet-img { background: var(--terra-light); border: 2px dashed var(--terra); border-radius: 12px; padding: 2rem 1.5rem; text-align: center; color: var(--terra); min-width: 160px; }
+    .magnet-img .big { font-size: 2.5rem; }
+    .magnet-img p { font-size: 0.82rem; margin-top: 0.5rem; font-weight: 600; }
+
+    /* CTA */
+    .cta-wrap { background: var(--brown); text-align: center; padding: 6rem 6%; }
+    .cta-wrap h2 { font-family: 'Lora', serif; font-size: 2.8rem; color: #fff; margin-bottom: 1rem; }
+    .cta-wrap p { color: rgba(255,255,255,0.65); font-size: 1.05rem; margin-bottom: 2.5rem; max-width: 440px; margin-left: auto; margin-right: auto; line-height: 1.7; }
+    .cta-btns { display: flex; gap: 1rem; justify-content: center; }
+    .btn-cream { background: var(--cream); color: var(--brown); padding: 0.95rem 2.2rem; border-radius: 30px; font-weight: 700; font-size: 1rem; }
+    .btn-cream-outline { border: 1.5px solid rgba(255,255,255,0.4); color: #fff; padding: 0.95rem 2.2rem; border-radius: 30px; font-weight: 500; font-size: 1rem; }
+    .cta-note { font-size: 0.85rem; color: rgba(255,255,255,0.4); margin-top: 1.2rem; }
+
+    /* FOOTER */
+    footer { background: #1a120a; padding: 3rem 6%; }
+    .foot-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 2.5rem; }
+    .foot-brand .logo { color: #fff; font-size: 1.3rem; }
+    .foot-brand p { color: rgba(255,255,255,0.45); font-size: 0.88rem; line-height: 1.7; margin-top: 0.75rem; }
+    .foot-col h4 { color: rgba(255,255,255,0.7); font-size: 0.85rem; font-weight: 600; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .foot-col a { display: block; color: rgba(255,255,255,0.4); font-size: 0.88rem; margin-bottom: 0.5rem; }
+    .foot-col a:hover { color: var(--sage); }
+    .foot-bottom { border-top: 1px solid rgba(255,255,255,0.08); padding-top: 2rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .foot-bottom p { color: rgba(255,255,255,0.3); font-size: 0.82rem; }
+
+    @media (max-width: 900px) {
+      .hero, .journey-grid { grid-template-columns: 1fr; }
+      .hero-visual, .hero-float { display: none; }
+      .serv-grid, .testi-grid { grid-template-columns: 1fr; }
+      .cond-grid { grid-template-columns: 1fr; }
+      .magnet-wrap { grid-template-columns: 1fr; margin: 0 4%; }
+      .magnet-img { display: none; }
+      .foot-grid { grid-template-columns: 1fr 1fr; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Insight<em>Clinic</em></div>
+  <div class="nav-links">
+    <a href="#">Services</a>
+    <a href="#">Our Team</a>
+    <a href="#">New Patients</a>
+    <a href="#">Blog</a>
+    <a href="#">Contact</a>
+  </div>
+  <a href="#" class="nav-cta">Book a Consultation</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div>
+    <div class="hero-label">🌿 Integrative Health · Islington N1</div>
+    <h1>Finally, someone who <em>actually listens</em></h1>
+    <p>We take the time to understand your full picture — not just your symptoms. Integrative medicine for people who've tried everything and deserve real answers.</p>
+    <div class="hero-ctas">
+      <a href="#" class="btn-terra">Book Your First Appointment</a>
+      <a href="#" class="btn-ghost">Free Discovery Call</a>
+    </div>
+    <div class="hero-trust">
+      <div>
+        <div class="rating">4.9</div>
+        <div class="stars">★★★★★</div>
+        <div class="rating-text">60+ Google reviews</div>
+      </div>
+      <div class="divider-v"></div>
+      <div class="trust-certs">BAcC · BANT · GOsC<br>registered practitioners</div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-card">
+      <div class="hero-card-img">📸 Warm clinic photography</div>
+      <div class="hero-card-foot">
+        <div class="dot-online"></div>
+        <p>Appointments available this week — <strong>book now</strong></p>
+      </div>
+    </div>
+    <div class="hero-float">
+      Next available slot<strong>Tomorrow, 10:30am</strong>
+    </div>
+  </div>
+</section>
+
+<!-- JOURNEY -->
+<section class="journey">
+  <div class="journey-grid">
+    <div>
+      <div class="label">Your Journey With Us</div>
+      <h2 class="serif">We've helped hundreds of people who felt like you do right now</h2>
+      <div class="journey-steps">
+        <div class="jstep">
+          <div class="jstep-num">1</div>
+          <div>
+            <h4>Tell us everything</h4>
+            <p>Your first appointment is 60–90 minutes. We want your full story — not a 10-minute summary. Every detail matters to us.</p>
+          </div>
+        </div>
+        <div class="jstep">
+          <div class="jstep-num">2</div>
+          <div>
+            <h4>We investigate properly</h4>
+            <p>Advanced functional testing — the markers standard blood tests miss. A full picture before we form any conclusions.</p>
+          </div>
+        </div>
+        <div class="jstep">
+          <div class="jstep-num">3</div>
+          <div>
+            <h4>A plan that's yours</h4>
+            <p>Not a generic protocol. A treatment plan built around your specific root causes, reviewed as you progress.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="journey-quote">
+      <div class="stars-sm">★★★★★</div>
+      <blockquote>"I'd spent four years being dismissed by doctors. Insight Clinic found what was wrong in three appointments. I can't overstate how much that meant."</blockquote>
+      <div class="patient">— Rachel H. · Canonbury · Nutritional therapy & acupuncture</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONDITIONS -->
+<section>
+  <div class="label">Who We Help</div>
+  <h2 class="serif">Conditions we treat at their root</h2>
+  <p class="sub">These aren't conditions we manage with medication alone. We find what's actually driving them — and address that.</p>
+  <div class="cond-grid">
+    <div class="cond-item"><div class="cond-icon">😮‍💨</div><div><strong>Chronic fatigue & burnout</strong><span>Including Long COVID and post-viral fatigue</span></div></div>
+    <div class="cond-item"><div class="cond-icon">🌀</div><div><strong>IBS & digestive conditions</strong><span>SIBO, dysbiosis, food sensitivities, bloating</span></div></div>
+    <div class="cond-item"><div class="cond-icon">🔄</div><div><strong>Hormonal imbalance</strong><span>PCOS, perimenopause, PMS, thyroid conditions</span></div></div>
+    <div class="cond-item"><div class="cond-icon">🧠</div><div><strong>Anxiety & low mood</strong><span>Integrative approach to mental-physical health</span></div></div>
+    <div class="cond-item"><div class="cond-icon">🦴</div><div><strong>Chronic pain</strong><span>Musculoskeletal, inflammatory, and neuropathic</span></div></div>
+    <div class="cond-item"><div class="cond-icon">⚡</div><div><strong>Autoimmune conditions</strong><span>Hashimoto's, rheumatoid arthritis, and more</span></div></div>
+    <div class="cond-item"><div class="cond-icon">🌸</div><div><strong>Women's health</strong><span>Fertility, endometriosis, hormonal acne</span></div></div>
+    <div class="cond-item"><div class="cond-icon">💉</div><div><strong>Metabolic health</strong><span>Blood sugar, weight, cardiovascular risk</span></div></div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services">
+  <div class="label">Our Disciplines</div>
+  <h2 class="serif">Every tool we need — working together</h2>
+  <p class="sub">Our practitioners collaborate on complex cases. You're not shuffled between referrals — you have a team.</p>
+  <div class="serv-grid">
+    <div class="serv-card">
+      <div class="icon">🩺</div>
+      <h3>Integrative GP</h3>
+      <p>Conventional medicine meets root-cause thinking. Full clinical assessment with functional testing beyond standard panels.</p>
+      <a href="#">Explore →</a>
+    </div>
+    <div class="serv-card">
+      <div class="icon">🪡</div>
+      <h3>Acupuncture</h3>
+      <p>BAcC-registered and evidence-based. Highly effective for pain, anxiety, hormonal balance, fatigue, and fertility.</p>
+      <a href="#">Explore →</a>
+    </div>
+    <div class="serv-card">
+      <div class="icon">🥦</div>
+      <h3>Nutritional Therapy</h3>
+      <p>BANT-registered nutritionists using advanced testing — not generic advice — to address the nutritional root of your symptoms.</p>
+      <a href="#">Explore →</a>
+    </div>
+    <div class="serv-card">
+      <div class="icon">🦴</div>
+      <h3>Osteopathy</h3>
+      <p>GOsC-registered whole-body structural care. We look at why the pain exists — not just where it is.</p>
+      <a href="#">Explore →</a>
+    </div>
+    <div class="serv-card">
+      <div class="icon">🌿</div>
+      <h3>Naturopathy</h3>
+      <p>Herbal and lifestyle medicine with a clinical foundation. Particularly powerful for adrenal support, hormones, and immunity.</p>
+      <a href="#">Explore →</a>
+    </div>
+    <div class="serv-card">
+      <div class="icon">🔬</div>
+      <h3>Functional Testing</h3>
+      <p>DUTCH hormones, stool analysis, SIBO breath test, intracellular nutrients, food sensitivity panels, and more.</p>
+      <a href="#">Explore →</a>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section>
+  <div class="label">Patient Stories</div>
+  <h2 class="serif">In their own words</h2>
+  <div class="testi-grid">
+    <div class="tcard">
+      <div class="stars-sm">★★★★★</div>
+      <blockquote>"For the first time in years, someone sat with me and really listened. They found Hashimoto's that three GPs had missed. I'm now back to myself."</blockquote>
+      <div class="author"><strong>Emma T.</strong><span> · Highbury</span></div>
+    </div>
+    <div class="tcard">
+      <div class="stars-sm">★★★★★</div>
+      <blockquote>"I was told my IBS was 'just stress'. It was SIBO. Eight weeks after starting the protocol I was symptom-free. It feels like a miracle but it's just good medicine."</blockquote>
+      <div class="author"><strong>James K.</strong><span> · Angel</span></div>
+    </div>
+    <div class="tcard">
+      <div class="stars-sm">★★★★★</div>
+      <blockquote>"The warmth and depth of care here is unlike anything I've experienced in healthcare. I actually look forward to my appointments."</blockquote>
+      <div class="author"><strong>Priya S.</strong><span> · Islington</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- LEAD MAGNET -->
+<div class="magnet-wrap">
+  <div>
+    <h2>Free Guide: The 5 Root Causes of Fatigue</h2>
+    <p>Find out which root cause is most likely driving your exhaustion — and what you can do about it. Written by our practitioners.</p>
+    <div class="magnet-form">
+      <input type="email" placeholder="Your email address">
+      <button>Send It To Me</button>
+    </div>
+  </div>
+  <div class="magnet-img">
+    <div class="big">📖</div>
+    <p>Free PDF — no spam, ever</p>
+  </div>
+</div>
+
+<!-- CTA -->
+<section class="cta-wrap">
+  <h2>You deserve answers.<br>Let's find them.</h2>
+  <p>Book a first consultation or start with a free 15-minute call to see if we're the right fit for you.</p>
+  <div class="cta-btns">
+    <a href="#" class="btn-cream">Book a Consultation</a>
+    <a href="#" class="btn-cream-outline">Free 15-Min Discovery Call</a>
+  </div>
+  <p class="cta-note">📍 24 Chapel Market, Islington N1 9EZ · 2 mins from Angel</p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <div class="logo">Insight<em style="color:var(--sage)">Clinic</em></div>
+      <p>Integrative health care in Islington since 2012. Treating the root cause — with the time and care that takes.</p>
+    </div>
+    <div class="foot-col">
+      <h4>Services</h4>
+      <a href="#">Integrative GP</a><a href="#">Acupuncture</a>
+      <a href="#">Nutritional Therapy</a><a href="#">Osteopathy</a>
+      <a href="#">Naturopathy</a><a href="#">Functional Testing</a>
+    </div>
+    <div class="foot-col">
+      <h4>Clinic</h4>
+      <a href="#">About Us</a><a href="#">Our Team</a>
+      <a href="#">New Patients</a><a href="#">Blog</a><a href="#">FAQs</a>
+    </div>
+    <div class="foot-col">
+      <h4>Find Us</h4>
+      <a href="#">📞 [Phone Number]</a>
+      <a href="#">✉ hello@insightclinic.care</a>
+      <a href="#">📍 24 Chapel Market, N1 9EZ</a>
+      <a href="#">Mon–Fri 8am–7pm</a><a href="#">Sat 9am–2pm</a>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <p>© 2025 Insight Clinic · All practitioners registered with their UK regulatory body</p>
+    <p><a href="#" style="color:rgba(255,255,255,.3)">Privacy</a> · <a href="#" style="color:rgba(255,255,255,.3)">Cookies</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

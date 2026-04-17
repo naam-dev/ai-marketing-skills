@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQs — Insight Clinic Islington</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #1a2e4a; --navy-light: #243d60; --teal: #2a9d8f; --teal-light: #3ab5a5;
+      --white: #ffffff; --off-white: #f8fafc; --grey-light: #f1f5f9;
+      --grey: #94a3b8; --grey-dark: #475569; --text: #1e293b;
+    }
+    body { font-family: 'Inter', sans-serif; color: var(--text); background: var(--white); }
+    a { text-decoration: none; color: inherit; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100; background: var(--white);
+      border-bottom: 1px solid #e2e8f0; padding: 0 5%;
+      display: flex; align-items: center; justify-content: space-between; height: 72px;
+    }
+    .logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--navy); font-weight: 600; }
+    .logo span { color: var(--teal); }
+    .nav-links { display: flex; gap: 2rem; font-size: 0.9rem; font-weight: 500; color: var(--grey-dark); }
+    .nav-links a:hover { color: var(--teal); }
+    .nav-links a.active { color: var(--teal); }
+    .nav-cta { background: var(--teal); color: #fff; padding: 0.6rem 1.4rem; border-radius: 6px; font-size: 0.9rem; font-weight: 600; }
+
+    .page-header { background: linear-gradient(135deg, var(--navy), var(--navy-light)); padding: 5rem 5%; text-align: center; }
+    .page-header .breadcrumb { font-size: 0.82rem; color: rgba(255,255,255,0.5); margin-bottom: 1rem; }
+    .page-header h1 { font-family: 'Playfair Display', serif; font-size: 3rem; color: #fff; margin-bottom: 1rem; }
+    .page-header p { color: rgba(255,255,255,0.7); font-size: 1.05rem; max-width: 540px; margin: 0 auto; line-height: 1.7; }
+
+    /* LAYOUT */
+    .faq-layout { display: grid; grid-template-columns: 240px 1fr; gap: 4rem; padding: 5rem 5%; align-items: start; }
+
+    /* SIDEBAR */
+    .faq-sidebar { position: sticky; top: 90px; }
+    .faq-sidebar h4 { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal); margin-bottom: 1rem; }
+    .faq-sidebar a { display: block; padding: 0.5rem 0; font-size: 0.88rem; color: var(--grey-dark); border-bottom: 1px solid #f1f5f9; transition: color 0.2s; }
+    .faq-sidebar a:hover { color: var(--teal); }
+    .faq-sidebar a:last-child { border-bottom: none; }
+
+    /* FAQ SECTIONS */
+    .faq-section { margin-bottom: 3.5rem; }
+    .faq-section h2 { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--navy); margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 2px solid var(--teal); }
+
+    /* ACCORDION */
+    details { border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 0.75rem; overflow: hidden; }
+    details[open] { border-color: var(--teal); }
+    summary {
+      padding: 1.2rem 1.5rem; font-weight: 600; color: var(--navy); cursor: pointer;
+      list-style: none; display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.95rem; user-select: none;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: '+'; font-size: 1.3rem; color: var(--teal); font-weight: 300; flex-shrink: 0; margin-left: 1rem; transition: transform 0.2s; }
+    details[open] summary::after { content: '−'; }
+    details[open] summary { background: var(--off-white); }
+    .answer { padding: 1.2rem 1.5rem; background: #fff; }
+    .answer p { color: var(--grey-dark); line-height: 1.75; font-size: 0.93rem; margin-bottom: 0.75rem; }
+    .answer p:last-child { margin-bottom: 0; }
+    .answer ul { margin: 0.75rem 0 0.75rem 1.2rem; color: var(--grey-dark); font-size: 0.93rem; }
+    .answer ul li { margin-bottom: 0.4rem; line-height: 1.6; }
+    .answer a { color: var(--teal); font-weight: 500; }
+    .answer strong { color: var(--navy); }
+
+    /* STILL HAVE QUESTIONS */
+    .still-q { background: var(--off-white); border-radius: 16px; padding: 3rem; text-align: center; margin: 0 5% 5rem; }
+    .still-q h3 { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--navy); margin-bottom: 0.75rem; }
+    .still-q p { color: var(--grey-dark); margin-bottom: 2rem; max-width: 440px; margin-left: auto; margin-right: auto; line-height: 1.7; }
+    .still-q-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-teal { background: var(--teal); color: #fff; padding: 0.85rem 2rem; border-radius: 8px; font-weight: 700; }
+    .btn-outline { border: 1.5px solid var(--navy); color: var(--navy); padding: 0.85rem 2rem; border-radius: 8px; font-weight: 600; }
+
+    footer { background: #0f1c2d; padding: 2.5rem 5%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    footer .logo { color: #fff; }
+    footer p { color: #475569; font-size: 0.85rem; }
+
+    @media (max-width: 900px) {
+      .faq-layout { grid-template-columns: 1fr; }
+      .faq-sidebar { display: none; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Insight<span>Clinic</span></div>
+  <div class="nav-links">
+    <a href="../concept-a/index.html">Home</a>
+    <a href="services.html">Services</a>
+    <a href="about.html">Our Team</a>
+    <a href="new-patients.html">New Patients</a>
+    <a href="faq.html" class="active">FAQs</a>
+  </div>
+  <a href="new-patients.html#book" class="nav-cta">Book a Consultation</a>
+</nav>
+
+<div class="page-header">
+  <div class="breadcrumb">Home → FAQs</div>
+  <h1>Frequently Asked Questions</h1>
+  <p>Everything patients ask us before booking. If your question isn't here, call us or book a free discovery call.</p>
+</div>
+
+<div class="faq-layout">
+
+  <!-- SIDEBAR -->
+  <div class="faq-sidebar">
+    <h4>Jump to section</h4>
+    <a href="#about-integrative">About integrative medicine</a>
+    <a href="#appointments">Appointments & process</a>
+    <a href="#testing">Testing</a>
+    <a href="#costs">Costs & insurance</a>
+    <a href="#services">Our services</a>
+    <a href="#practical">Practical information</a>
+  </div>
+
+  <!-- FAQ CONTENT -->
+  <div>
+
+    <!-- ABOUT INTEGRATIVE MEDICINE -->
+    <div class="faq-section" id="about-integrative">
+      <h2>About integrative medicine</h2>
+
+      <details>
+        <summary>What is integrative medicine?</summary>
+        <div class="answer">
+          <p>Integrative medicine combines conventional clinical assessment — the kind you'd expect from a GP or specialist — with evidence-based complementary therapies like acupuncture, nutritional therapy, and naturopathy. The key word is <strong>integrative</strong>: we're not replacing conventional medicine, we're adding the tools it doesn't routinely use.</p>
+          <p>The core difference is philosophy: conventional medicine typically identifies a disease and matches it to a treatment. Integrative medicine asks <em>why</em> the disease or symptom developed in the first place — and addresses that root cause alongside managing the symptom.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Is integrative medicine the same as alternative medicine?</summary>
+        <div class="answer">
+          <p>No — and the distinction matters. <strong>Alternative medicine</strong> replaces conventional treatment. <strong>Integrative medicine</strong> works alongside it, using therapies with a clinical evidence base to complement what conventional medicine provides.</p>
+          <p>Our practitioners are all registered with their relevant UK regulatory bodies and practice within defined clinical scopes. We don't reject conventional medicine — many of our patients are also under the care of NHS GPs and specialists, and we actively communicate with other clinicians when it's appropriate.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>What conditions does integrative medicine treat best?</summary>
+        <div class="answer">
+          <p>Integrative medicine tends to produce its strongest outcomes for chronic, complex, and "unexplained" conditions — the ones conventional medicine finds hardest to address:</p>
+          <ul>
+            <li>Chronic fatigue and post-viral fatigue (including Long COVID)</li>
+            <li>Digestive conditions — IBS, SIBO, bloating, food sensitivities</li>
+            <li>Hormonal imbalance — PCOS, perimenopause, PMS, thyroid conditions</li>
+            <li>Anxiety and stress with physical manifestations</li>
+            <li>Autoimmune conditions — Hashimoto's, RA, lupus, inflammatory bowel disease</li>
+            <li>Chronic musculoskeletal pain</li>
+            <li>Skin conditions with internal drivers — acne, eczema, rosacea</li>
+            <li>Metabolic conditions — blood sugar dysregulation, elevated cholesterol</li>
+          </ul>
+          <p>We also see patients who are generally healthy but want a proactive, comprehensive health assessment to optimise their wellbeing.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Is the evidence behind integrative medicine solid?</summary>
+        <div class="answer">
+          <p>The evidence varies by therapy and condition — as it does in conventional medicine. We use therapies that have a credible evidence base for the conditions we treat. For example:</p>
+          <ul>
+            <li><strong>Acupuncture</strong> is recommended by NICE for chronic primary pain, headaches, and migraines</li>
+            <li><strong>Nutritional therapy</strong> for conditions like IBS, PCOS, and metabolic disease is well-supported in peer-reviewed literature</li>
+            <li><strong>Osteopathy</strong> is recommended by NICE for low back pain</li>
+            <li><strong>Functional testing</strong> (DUTCH, stool analysis, advanced thyroid panels) reflects genuine advances in diagnostic medicine</li>
+          </ul>
+          <p>We don't use therapies because they're popular — we use them because there's clinical reason to believe they'll help your specific situation.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- APPOINTMENTS -->
+    <div class="faq-section" id="appointments">
+      <h2>Appointments & process</h2>
+
+      <details>
+        <summary>Do I need a GP referral to book?</summary>
+        <div class="answer">
+          <p>No. Insight Clinic is a private clinic and you can book directly without a referral letter. Simply use the booking form on our <a href="new-patients.html">New Patients page</a> or call us.</p>
+          <p>If you have existing GP letters, blood test results, or hospital reports, please bring them or send them in advance — they provide useful context and save time at your appointment.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>How long is the first appointment?</summary>
+        <div class="answer">
+          <p>Initial consultations are <strong>60–90 minutes</strong> depending on the service. This is non-negotiable — thorough history-taking is the foundation of everything we do, and it can't be rushed into 15 minutes.</p>
+          <p>Follow-up appointments are typically 30–45 minutes.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>What is the free discovery call?</summary>
+        <div class="answer">
+          <p>A free 15-minute phone or video call with one of our practitioners. It's designed for patients who aren't sure whether integrative medicine is right for them, or who aren't sure which service to book.</p>
+          <p>In the call, you can describe your situation, ask questions about how we work, and the practitioner can tell you honestly whether we're likely to be helpful — and which service would be the best starting point. There's no obligation to book anything.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>What should I bring to my first appointment?</summary>
+        <div class="answer">
+          <ul>
+            <li>Any previous blood test results (printed or on your phone)</li>
+            <li>Any hospital letters, scan reports, or specialist correspondence</li>
+            <li>A list of all medications and supplements you currently take (including doses)</li>
+            <li>Any food diary or symptom journal you've kept</li>
+            <li>A list of questions — your appointment time is yours, use it</li>
+          </ul>
+          <p>If you've completed our intake questionnaire, your practitioner will already have reviewed it. You don't need to bring a copy.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>How quickly will I see results?</summary>
+        <div class="answer">
+          <p>It depends on the condition and the individual. Some patients notice significant improvement within 4–6 weeks; others with complex, long-standing conditions may take 3–6 months to see meaningful change.</p>
+          <p>We track progress against measurable markers — not just how you feel. Most patients see some improvement in their first follow-up period, with continued improvement as treatment continues.</p>
+          <p>We'll be honest with you about realistic expectations at your first appointment — we don't promise results we can't deliver.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Can I see multiple practitioners at Insight Clinic?</summary>
+        <div class="answer">
+          <p>Yes — and for many patients, this is where integrative care produces its best results. Seeing a nutritional therapist and an acupuncturist alongside each other, with a shared understanding of your case, is very different from seeing them independently at separate clinics.</p>
+          <p>Our practitioners discuss complex cases with each other (with your consent) so that your treatment plan is coherent — not a collection of disconnected recommendations.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- TESTING -->
+    <div class="faq-section" id="testing">
+      <h2>Testing</h2>
+
+      <details>
+        <summary>What functional tests do you offer?</summary>
+        <div class="answer">
+          <p>We offer a range of advanced functional tests that go beyond standard NHS panels. The most commonly ordered include:</p>
+          <ul>
+            <li><strong>DUTCH Complete</strong> — comprehensive hormone testing via dried urine, including oestrogen metabolism, progesterone, testosterone, DHEA, and 24-hour cortisol rhythm</li>
+            <li><strong>Comprehensive Stool Analysis</strong> — microbiome mapping, inflammatory markers, intestinal permeability (zonulin), digestive enzyme function</li>
+            <li><strong>SIBO Breath Test</strong> — detects small intestinal bacterial overgrowth</li>
+            <li><strong>Advanced Thyroid Panel</strong> — TSH, Free T3, Free T4, Reverse T3, TPO and TgAb antibodies</li>
+            <li><strong>Intracellular Nutrient Panel</strong> — magnesium, zinc, CoQ10, B vitamins, omega-3 index, vitamin D</li>
+            <li><strong>IgG Food Sensitivity Panel</strong> — 200+ foods tested for delayed immune reactions</li>
+          </ul>
+          <p>Tests are ordered based on your clinical picture — we don't run panels indiscriminately.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Why don't these tests show up on standard NHS blood results?</summary>
+        <div class="answer">
+          <p>Standard NHS testing is designed to identify pathology — serious disease that requires urgent intervention. Functional testing is designed to identify <em>sub-optimal function</em> — the state between "seriously unwell" and "thriving" where most unexplained symptoms live.</p>
+          <p>For example: serum magnesium (the standard test) is almost always normal, because your body strips magnesium from cells and bones to maintain blood levels. Intracellular magnesium — which is what actually matters for energy production — can be severely depleted while serum levels look fine. This is why you can have significant magnesium insufficiency and a "normal" blood test.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>How are tests done — do I need to come to the clinic?</summary>
+        <div class="answer">
+          <p>Most functional tests can be done at home:</p>
+          <ul>
+            <li><strong>DUTCH test</strong> — urine collection strips, done at home over one day</li>
+            <li><strong>Stool analysis</strong> — home collection kit posted to you</li>
+            <li><strong>SIBO breath test</strong> — done at home with a kit we provide</li>
+            <li><strong>Blood panels</strong> — drawn at the clinic or at a local phlebotomy service</li>
+          </ul>
+          <p>We walk you through every test clearly and provide written instructions.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>How long do results take?</summary>
+        <div class="answer">
+          <p>It varies by test:</p>
+          <ul>
+            <li><strong>Standard blood panels</strong> — 2–5 working days</li>
+            <li><strong>DUTCH hormone test</strong> — 10–14 days</li>
+            <li><strong>Stool analysis</strong> — 10–14 days</li>
+            <li><strong>SIBO breath test</strong> — 7–10 days</li>
+            <li><strong>Food sensitivity panels</strong> — 10–14 days</li>
+          </ul>
+          <p>We'll book a results review appointment once results are in. We don't send results without a consultation to interpret them — raw data without clinical context can cause unnecessary anxiety.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- COSTS -->
+    <div class="faq-section" id="costs">
+      <h2>Costs & insurance</h2>
+
+      <details>
+        <summary>How much does a consultation cost?</summary>
+        <div class="answer">
+          <p>Our consultation fees vary by service and appointment type. Please contact us or visit our <a href="services.html">services page</a> for current pricing.</p>
+          <p>As a general guide: initial consultations are longer (60–90 minutes) and priced accordingly; follow-up appointments are shorter and less expensive. Functional tests are priced separately and quoted before we order them.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Is integrative medicine covered by health insurance?</summary>
+        <div class="answer">
+          <p>Coverage depends entirely on your specific policy and insurer. Some insurers cover:</p>
+          <ul>
+            <li>Osteopathy (most commonly covered)</li>
+            <li>Acupuncture (many policies cover this)</li>
+            <li>Private GP consultations</li>
+          </ul>
+          <p>Nutritional therapy and naturopathy are less commonly covered. We recommend checking your policy documents or calling your insurer before booking. We can provide itemised receipts and clinical letters to support your claim.</p>
+          <p>Insurers we have experience working with include: Bupa, AXA Health, Vitality, and WPA.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Do you offer payment plans?</summary>
+        <div class="answer">
+          <p>For patients undertaking extended treatment programmes, we can discuss a payment plan. Please raise this at your first appointment or contact us before booking.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>What is your cancellation policy?</summary>
+        <div class="answer">
+          <ul>
+            <li><strong>48+ hours notice:</strong> Full refund</li>
+            <li><strong>24–48 hours notice:</strong> 50% refund</li>
+            <li><strong>Less than 24 hours:</strong> No refund (the appointment slot cannot be reallocated at short notice)</li>
+            <li><strong>Discovery calls:</strong> Please notify us if you can't make it — no charge, just courtesy</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+
+    <!-- SERVICES -->
+    <div class="faq-section" id="services">
+      <h2>Our services</h2>
+
+      <details>
+        <summary>What is the difference between a nutritional therapist and a dietitian?</summary>
+        <div class="answer">
+          <p><strong>Dietitians</strong> are regulated by the HCPC and typically work within NHS guidelines, focusing on clinical nutrition for specific medical conditions. They are the gold standard for conditions like renal disease, eating disorders, and oncology nutrition.</p>
+          <p><strong>Nutritional therapists</strong> (BANT-registered) take a broader, functional medicine approach — using advanced testing, therapeutic supplementation, and personalised protocols to address the nutritional roots of complex and chronic conditions. The scope is wider but the regulatory framework is different.</p>
+          <p>For most of the conditions we treat at Insight Clinic, a BANT-registered nutritional therapist is the right fit. If we assess that a dietitian is more appropriate for your situation, we'll say so.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Does acupuncture hurt?</summary>
+        <div class="answer">
+          <p>Most patients describe a brief sensation of pressure or a mild ache as the needle is inserted — not what most people would call pain. The needles used in acupuncture are extremely fine (much thinner than a hypodermic needle) and once in place, most patients feel deeply relaxed.</p>
+          <p>If at any point a needle is uncomfortable, tell your practitioner — adjustments can be made immediately. Acupuncture should not be an ordeal.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Can I continue seeing my NHS GP alongside coming to Insight Clinic?</summary>
+        <div class="answer">
+          <p>Absolutely — and we encourage it. We are a complement to, not a replacement for, your NHS care. If we discover something that needs NHS follow-up or urgent attention, we'll communicate that clearly.</p>
+          <p>With your consent, our integrative GP can send a written summary to your NHS GP so they remain informed. Good communication between your healthcare providers is in your best interest.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Can you prescribe medication?</summary>
+        <div class="answer">
+          <p>Our integrative GP is a registered medical doctor and can prescribe privately where clinically appropriate. We do not prescribe NHS medications — for these, you would need to see your NHS GP.</p>
+          <p>Our naturopaths and nutritional therapists prescribe herbal medicines and supplements therapeutically — these are practitioner-grade products, not the same as over-the-counter supplements.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- PRACTICAL -->
+    <div class="faq-section" id="practical">
+      <h2>Practical information</h2>
+
+      <details>
+        <summary>Where are you located and how do I get there?</summary>
+        <div class="answer">
+          <p><strong>Address:</strong> 24 Chapel Market, Islington, London N1 9EZ</p>
+          <ul>
+            <li><strong>Angel tube:</strong> 2-minute walk (Northern line)</li>
+            <li><strong>Bus:</strong> Routes 19, 38, 341 stop on Upper Street</li>
+            <li><strong>Cycle:</strong> Santander hire point on Chapel Market</li>
+            <li><strong>Car:</strong> Islington CPZ operates Mon–Sat; limited on-street parking</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>What are your opening hours?</summary>
+        <div class="answer">
+          <ul>
+            <li><strong>Monday – Friday:</strong> 8:00am – 7:00pm</li>
+            <li><strong>Saturday:</strong> 9:00am – 2:00pm</li>
+            <li><strong>Sunday:</strong> Closed</li>
+          </ul>
+          <p>Evening appointments (until 7pm) are available on Monday, Wednesday, and Thursday.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Is the clinic accessible for wheelchair users?</summary>
+        <div class="answer">
+          <p>Please contact us before booking so we can confirm current accessibility arrangements and ensure we have the right setup for your visit. We want every patient to be able to access care without difficulty.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Is my information kept confidential?</summary>
+        <div class="answer">
+          <p>Yes. All patient information is handled in full compliance with GDPR and clinical confidentiality standards. We will not share your information with any third party without your explicit consent — except in circumstances where there is a serious risk to health or safety, as required by law.</p>
+          <p>With your consent, we may communicate with your NHS GP or other treating practitioners. This is always your choice.</p>
+        </div>
+      </details>
+
+    </div>
+  </div>
+</div>
+
+<!-- STILL HAVE QUESTIONS -->
+<div class="still-q">
+  <h3>Still have a question?</h3>
+  <p>Our practitioners are happy to answer any question before you book — call us, email us, or start with a free 15-minute discovery call.</p>
+  <div class="still-q-btns">
+    <a href="new-patients.html#book" class="btn-teal">Book a Free Discovery Call</a>
+    <a href="tel:+44XXXXXXXXXX" class="btn-outline">Call Us: [Phone Number]</a>
+  </div>
+</div>
+
+<footer>
+  <div class="logo">Insight<span style="color:var(--teal)">Clinic</span></div>
+  <p>24 Chapel Market, Islington N1 9EZ · insightclinic.care</p>
+  <p style="color:#64748b; font-size:0.82rem">© 2025 Insight Clinic</p>
+</footer>
+
+</body>
+</html>

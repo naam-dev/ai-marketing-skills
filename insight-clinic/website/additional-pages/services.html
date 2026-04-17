@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Services — Insight Clinic Islington</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #1a2e4a; --navy-light: #243d60; --teal: #2a9d8f; --teal-light: #3ab5a5;
+      --gold: #e9c46a; --white: #ffffff; --off-white: #f8fafc; --grey-light: #f1f5f9;
+      --grey: #94a3b8; --grey-dark: #475569; --text: #1e293b;
+    }
+    body { font-family: 'Inter', sans-serif; color: var(--text); background: var(--white); }
+    a { text-decoration: none; color: inherit; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100; background: var(--white);
+      border-bottom: 1px solid #e2e8f0; padding: 0 5%;
+      display: flex; align-items: center; justify-content: space-between; height: 72px;
+    }
+    .logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--navy); font-weight: 600; }
+    .logo span { color: var(--teal); }
+    .nav-links { display: flex; gap: 2rem; font-size: 0.9rem; font-weight: 500; color: var(--grey-dark); }
+    .nav-links a:hover { color: var(--teal); }
+    .nav-links a.active { color: var(--teal); }
+    .nav-cta { background: var(--teal); color: #fff; padding: 0.6rem 1.4rem; border-radius: 6px; font-size: 0.9rem; font-weight: 600; }
+
+    /* PAGE HEADER */
+    .page-header { background: linear-gradient(135deg, var(--navy), var(--navy-light)); padding: 5rem 5%; text-align: center; }
+    .page-header .breadcrumb { font-size: 0.82rem; color: rgba(255,255,255,0.5); margin-bottom: 1rem; }
+    .page-header h1 { font-family: 'Playfair Display', serif; font-size: 3rem; color: #fff; margin-bottom: 1rem; }
+    .page-header p { color: rgba(255,255,255,0.7); font-size: 1.05rem; max-width: 580px; margin: 0 auto; line-height: 1.7; }
+
+    /* SERVICE NAV */
+    .serv-nav { background: var(--off-white); border-bottom: 1px solid #e2e8f0; padding: 1rem 5%; display: flex; gap: 0.5rem; overflow-x: auto; }
+    .serv-nav a { white-space: nowrap; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 500; color: var(--grey-dark); transition: all 0.2s; }
+    .serv-nav a:hover, .serv-nav a.active { background: var(--teal); color: #fff; }
+
+    section { padding: 5rem 5%; }
+    .section-label { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal); margin-bottom: 0.6rem; }
+    h2.serif { font-family: 'Playfair Display', serif; font-size: 2.4rem; color: var(--navy); margin-bottom: 1rem; line-height: 1.2; }
+    .sub { font-size: 1rem; color: var(--grey-dark); line-height: 1.75; max-width: 600px; }
+
+    /* SERVICE DETAIL */
+    .serv-block { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; padding: 5rem 5%; border-bottom: 1px solid #e2e8f0; }
+    .serv-block:nth-child(even) { background: var(--off-white); }
+    .serv-block:nth-child(even) .serv-content { order: 2; }
+    .serv-block:nth-child(even) .serv-aside { order: 1; }
+    .serv-icon-big { font-size: 3.5rem; margin-bottom: 1.5rem; }
+    .serv-block h2 { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--navy); margin-bottom: 0.5rem; }
+    .serv-block .reg { font-size: 0.82rem; color: var(--teal); font-weight: 600; margin-bottom: 1.2rem; }
+    .serv-block p { color: var(--grey-dark); line-height: 1.75; margin-bottom: 1rem; }
+    .serv-block h4 { color: var(--navy); font-weight: 600; margin: 1.5rem 0 0.75rem; }
+    .treats-list { list-style: none; }
+    .treats-list li { padding: 0.4rem 0; border-bottom: 1px solid #e2e8f0; font-size: 0.9rem; color: var(--grey-dark); display: flex; align-items: center; gap: 0.6rem; }
+    .treats-list li:last-child { border-bottom: none; }
+    .check { color: var(--teal); font-weight: 700; }
+
+    /* ASIDE CARD */
+    .serv-aside-card { background: var(--white); border: 1px solid #e2e8f0; border-radius: 16px; padding: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+    .serv-aside-card h4 { color: var(--navy); font-weight: 700; margin-bottom: 1rem; }
+    .aside-stat { display: flex; align-items: center; gap: 1rem; padding: 0.8rem 0; border-bottom: 1px solid #f1f5f9; }
+    .aside-stat:last-child { border-bottom: none; }
+    .aside-stat .icon { font-size: 1.4rem; }
+    .aside-stat strong { display: block; font-size: 0.9rem; color: var(--navy); }
+    .aside-stat span { font-size: 0.82rem; color: var(--grey); }
+    .book-btn { display: block; background: var(--teal); color: #fff; text-align: center; padding: 0.85rem; border-radius: 8px; font-weight: 700; margin-top: 1.5rem; transition: background 0.2s; }
+    .book-btn:hover { background: var(--teal-light); }
+    .discovery-link { display: block; text-align: center; font-size: 0.85rem; color: var(--teal); margin-top: 0.75rem; font-weight: 500; }
+
+    /* TESTING SECTION */
+    .testing { background: var(--navy); color: #fff; }
+    .testing h2 { color: #fff; }
+    .testing .sub { color: #94a3b8; }
+    .tests-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3rem; }
+    .test-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 1.8rem; }
+    .test-card h4 { color: #fff; font-weight: 600; margin-bottom: 0.4rem; }
+    .test-card .why { font-size: 0.78rem; color: var(--teal-light); font-weight: 600; margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .test-card p { font-size: 0.88rem; color: #94a3b8; line-height: 1.6; }
+
+    /* CTA */
+    .cta { background: var(--teal); text-align: center; padding: 5rem 5%; }
+    .cta h2 { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: #fff; margin-bottom: 0.75rem; }
+    .cta p { color: rgba(255,255,255,0.85); margin-bottom: 2rem; font-size: 1rem; }
+    .cta-btns { display: flex; gap: 1rem; justify-content: center; }
+    .btn-white { background: #fff; color: var(--teal); padding: 0.9rem 2rem; border-radius: 8px; font-weight: 700; }
+    .btn-outline-w { border: 2px solid rgba(255,255,255,0.5); color: #fff; padding: 0.9rem 2rem; border-radius: 8px; font-weight: 600; }
+
+    footer { background: #0f1c2d; padding: 2.5rem 5%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    footer .logo { color: #fff; }
+    footer p { color: #475569; font-size: 0.85rem; }
+
+    @media (max-width: 900px) {
+      .serv-block { grid-template-columns: 1fr; gap: 2rem; }
+      .serv-block:nth-child(even) .serv-content, .serv-block:nth-child(even) .serv-aside { order: unset; }
+      .tests-grid { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Insight<span>Clinic</span></div>
+  <div class="nav-links">
+    <a href="../concept-a/index.html">Home</a>
+    <a href="services.html" class="active">Services</a>
+    <a href="about.html">Our Team</a>
+    <a href="new-patients.html">New Patients</a>
+    <a href="faq.html">FAQs</a>
+  </div>
+  <a href="#book" class="nav-cta">Book a Consultation</a>
+</nav>
+
+<div class="page-header">
+  <div class="breadcrumb">Home → Services</div>
+  <h1>Our Services</h1>
+  <p>Every discipline we offer works together. When you come to Insight Clinic, you get a team — not a series of separate referrals.</p>
+</div>
+
+<div class="serv-nav">
+  <a href="#gp" class="active">Integrative GP</a>
+  <a href="#acupuncture">Acupuncture</a>
+  <a href="#nutrition">Nutritional Therapy</a>
+  <a href="#osteopathy">Osteopathy</a>
+  <a href="#naturopathy">Naturopathy</a>
+  <a href="#testing">Functional Testing</a>
+</div>
+
+<!-- INTEGRATIVE GP -->
+<div class="serv-block" id="gp">
+  <div class="serv-content">
+    <div class="serv-icon-big">🩺</div>
+    <div class="section-label">Service 01</div>
+    <h2>Integrative GP Consultations</h2>
+    <div class="reg">MBChB · MRCGP · Integrative Medicine trained</div>
+    <p>Our integrative GP brings conventional medical training to a root-cause framework. That means you get the rigour of clinical medicine — proper examination, appropriate referrals, prescription access — combined with the depth of a functional medicine lens that asks <em>why</em> you are unwell, not just what label to give your symptoms.</p>
+    <p>First appointments are 60 minutes. We take a full history, review all previous results and investigations, and order targeted functional tests that go beyond standard NHS panels.</p>
+    <h4>We see patients with:</h4>
+    <ul class="treats-list">
+      <li><span class="check">✓</span> Chronic fatigue and post-viral fatigue, including Long COVID</li>
+      <li><span class="check">✓</span> Unexplained symptoms after normal investigations</li>
+      <li><span class="check">✓</span> Complex or multi-system presentations</li>
+      <li><span class="check">✓</span> Autoimmune conditions — Hashimoto's, lupus, RA, IBD</li>
+      <li><span class="check">✓</span> Metabolic health — blood sugar, cholesterol, cardiovascular risk</li>
+      <li><span class="check">✓</span> Patients seeking a second opinion</li>
+      <li><span class="check">✓</span> Patients wanting a proactive, comprehensive health review</li>
+    </ul>
+  </div>
+  <div class="serv-aside">
+    <div class="serv-aside-card">
+      <h4>Appointment details</h4>
+      <div class="aside-stat"><span class="icon">⏱</span><div><strong>Initial consultation</strong><span>60 minutes · £[price]</span></div></div>
+      <div class="aside-stat"><span class="icon">🔄</span><div><strong>Follow-up appointments</strong><span>30 minutes · £[price]</span></div></div>
+      <div class="aside-stat"><span class="icon">📋</span><div><strong>Functional tests</strong><span>Ordered at first appointment; priced separately</span></div></div>
+      <div class="aside-stat"><span class="icon">📍</span><div><strong>Location</strong><span>24 Chapel Market, Islington N1 9EZ</span></div></div>
+      <a href="#book" class="book-btn">Book an Integrative GP Appointment</a>
+      <a href="#discovery" class="discovery-link">Or start with a free 15-min discovery call</a>
+    </div>
+  </div>
+</div>
+
+<!-- ACUPUNCTURE -->
+<div class="serv-block" id="acupuncture">
+  <div class="serv-content">
+    <div class="serv-icon-big">🪡</div>
+    <div class="section-label">Service 02</div>
+    <h2>Acupuncture</h2>
+    <div class="reg">British Acupuncture Council (BAcC) Registered</div>
+    <p>Our acupuncturists are BAcC-registered — the gold standard for acupuncture practice in the UK — and bring a clinical, evidence-based approach to treatment. Acupuncture at Insight Clinic isn't a standalone treatment; it's integrated with your overall care plan.</p>
+    <p>The evidence base for acupuncture continues to grow. NICE guidelines recommend it for chronic primary pain, tension-type headaches, and migraines. Beyond these, our practitioners have significant clinical experience treating the conditions listed below.</p>
+    <h4>Conditions we treat with acupuncture:</h4>
+    <ul class="treats-list">
+      <li><span class="check">✓</span> Chronic pain — back, neck, joint, headache, migraine</li>
+      <li><span class="check">✓</span> Anxiety and stress-related conditions</li>
+      <li><span class="check">✓</span> Fatigue and sleep disturbance</li>
+      <li><span class="check">✓</span> Hormonal conditions — PMS, PCOS, perimenopause</li>
+      <li><span class="check">✓</span> Fertility support (alongside conventional treatment)</li>
+      <li><span class="check">✓</span> Nausea and digestive symptoms</li>
+      <li><span class="check">✓</span> Post-surgical and post-injury recovery</li>
+    </ul>
+  </div>
+  <div class="serv-aside">
+    <div class="serv-aside-card">
+      <h4>Appointment details</h4>
+      <div class="aside-stat"><span class="icon">⏱</span><div><strong>Initial consultation</strong><span>60 minutes · £[price]</span></div></div>
+      <div class="aside-stat"><span class="icon">🔄</span><div><strong>Follow-up sessions</strong><span>45 minutes · £[price]</span></div></div>
+      <div class="aside-stat"><span class="icon">📅</span><div><strong>Course recommendation</strong><span>Most conditions: 6–8 sessions initially</span></div></div>
+      <div class="aside-stat"><span class="icon">🌿</span><div><strong>Needles used</strong><span>Single-use, sterile, ultra-fine gauge</span></div></div>
+      <a href="#book" class="book-btn">Book an Acupuncture Appointment</a>
+      <a href="#discovery" class="discovery-link">Or start with a free 15-min discovery call</a>
+    </div>
+  </div>
+</div>
+
+<!-- NUTRITIONAL THERAPY -->
+<div class="serv-block" id="nutrition">
+  <div class="serv-content">
+    <div class="serv-icon-big">🥦</div>
+    <div class="section-label">Service 03</div>
+    <h2>Nutritional Therapy</h2>
+    <div class="reg">BANT Registered · CNHC Accredited</div>
+    <p>Our nutritional therapists are BANT-registered (British Association for Nutrition and Lifestyle Medicine) — the professional standard for nutritional therapy in the UK. They use advanced functional testing to identify the nutritional and metabolic roots of your symptoms, then build a personalised protocol — not a generic diet plan.</p>
+    <p>The difference between nutritional therapy and dietetics is scope: we work with the full functional picture, using tests rarely ordered in conventional settings to find what's actually driving your symptoms.</p>
+    <h4>We commonly identify and treat:</h4>
+    <ul class="treats-list">
+      <li><span class="check">✓</span> Gut dysbiosis, SIBO, and intestinal permeability</li>
+      <li><span class="check">✓</span> IBS, bloating, food sensitivities, and intolerances</li>
+      <li><span class="check">✓</span> Nutrient deficiencies — magnesium, B12, iron, zinc, CoQ10</li>
+      <li><span class="check">✓</span> Blood sugar dysregulation and insulin resistance</li>
+      <li><span class="check">✓</span> Thyroid support (nutritional component)</li>
+      <li><span class="check">✓</span> Hormonal conditions — PCOS, endometriosis, perimenopause</li>
+      <li><span class="check">✓</span> Inflammation and autoimmunity</li>
+      <li><span class="check">✓</span> Weight management through a metabolic lens</li>
+    </ul>
+  </div>
+  <div class="serv-aside">
+    <div class="serv-aside-card">
+      <h4>Appointment details</h4>
+      <div class="aside-stat"><span class="icon">⏱</span><div><strong>Initial consultation</strong><span>75 minutes · £[price]</span></div></div>
+      <div class="aside-stat"><span class="icon">🔄</span><div><strong>Review appointments</strong><span>45 minutes · £[price]</span></div></div>
+      <div class="aside-stat"><span class="icon">🔬</span><div><strong>Testing</strong><span>Stool analysis, food sensitivity, nutrient panels — ordered as needed</span></div></div>
+      <div class="aside-stat"><span class="icon">📄</span><div><strong>What you receive</strong><span>Full written protocol with food plan, supplement guidance, lifestyle recommendations</span></div></div>
+      <a href="#book" class="book-btn">Book a Nutrition Consultation</a>
+      <a href="#discovery" class="discovery-link">Or start with a free 15-min discovery call</a>
+    </div>
+  </div>
+</div>
+
+<!-- OSTEOPATHY -->
+<div class="serv-block" id="osteopathy">
+  <div class="serv-content">
+    <div class="serv-icon-big">🦴</div>
+    <div class="section-label">Service 04</div>
+    <h2>Osteopathy</h2>
+    <div class="reg">General Osteopathic Council (GOsC) Registered</div>
+    <p>Osteopathy is a whole-body approach to musculoskeletal health — regulated by the General Osteopathic Council (GOsC) and recognised by NICE for the treatment of low back pain. Our osteopaths don't just treat the site of pain; they investigate the postural patterns, movement habits, and systemic factors that are maintaining it.</p>
+    <p>Within the integrative clinic setting, our osteopaths collaborate with nutritional therapists and acupuncturists on complex cases — so patients with chronic inflammatory pain get both structural and systemic treatment.</p>
+    <h4>We treat:</h4>
+    <ul class="treats-list">
+      <li><span class="check">✓</span> Lower back and neck pain — acute and chronic</li>
+      <li><span class="check">✓</span> Joint pain — hip, knee, shoulder, wrist</li>
+      <li><span class="check">✓</span> Sciatica and nerve pain</li>
+      <li><span class="check">✓</span> Sports injuries and post-surgical rehabilitation</li>
+      <li><span class="check">✓</span> Headaches and jaw tension (TMJ)</li>
+      <li><span class="check">✓</span> Postural problems from desk work</li>
+      <li><span class="check">✓</span> Pregnancy-related musculoskeletal pain</li>
+    </ul>
+  </div>
+  <div class="serv-aside">
+    <div class="serv-aside-card">
+      <h4>Appointment details</h4>
+      <div class="aside-stat"><span class="icon">⏱</span><div><strong>Initial consultation</strong><span>60 minutes · £[price]</span></div></div>
+      <div class="aside-stat"><span class="icon">🔄</span><div><strong>Follow-up sessions</strong><span>45 minutes · £[price]</span></div></div>
+      <div class="aside-stat"><span class="icon">👕</span><div><strong>What to wear</strong><span>Comfortable clothing that allows movement; we may need to examine the spine</span></div></div>
+      <div class="aside-stat"><span class="icon">📅</span><div><strong>Typical course</strong><span>3–6 sessions for most acute conditions</span></div></div>
+      <a href="#book" class="book-btn">Book an Osteopathy Appointment</a>
+      <a href="#discovery" class="discovery-link">Or start with a free 15-min discovery call</a>
+    </div>
+  </div>
+</div>
+
+<!-- NATUROPATHY -->
+<div class="serv-block" id="naturopathy">
+  <div class="serv-content">
+    <div class="serv-icon-big">🌿</div>
+    <div class="section-label">Service 05</div>
+    <h2>Naturopathy</h2>
+    <div class="reg">General Council and Register of Naturopaths (GCRN) · Registered Medical Herbalist</div>
+    <p>Naturopathy at Insight Clinic is clinical — not wellness-adjacent. Our naturopaths are trained in herbal medicine, lifestyle medicine, and natural therapeutics, and they work within your overall care plan alongside other practitioners. Treatment is evidence-informed and practitioner-supervised, not supplement guesswork.</p>
+    <p>Naturopathy is particularly effective for hormonal conditions, immune regulation, adrenal support, and cases where patients want to reduce pharmaceutical dependency under proper supervision.</p>
+    <h4>We work with:</h4>
+    <ul class="treats-list">
+      <li><span class="check">✓</span> Adrenal and HPA axis dysregulation (the clinical reality behind "adrenal fatigue")</li>
+      <li><span class="check">✓</span> Thyroid support — hashimoto's, sub-clinical hypothyroidism</li>
+      <li><span class="check">✓</span> Hormonal balance — PCOS, endometriosis, perimenopause</li>
+      <li><span class="check">✓</span> Immune conditions and inflammatory states</li>
+      <li><span class="check">✓</span> Anxiety and nervous system regulation</li>
+      <li><span class="check">✓</span> Skin conditions with internal drivers — acne, eczema, psoriasis</li>
+      <li><span class="check">✓</span> Detoxification support</li>
+    </ul>
+  </div>
+  <div class="serv-aside">
+    <div class="serv-aside-card">
+      <h4>Appointment details</h4>
+      <div class="aside-stat"><span class="icon">⏱</span><div><strong>Initial consultation</strong><span>75 minutes · £[price]</span></div></div>
+      <div class="aside-stat"><span class="icon">🔄</span><div><strong>Review appointments</strong><span>45 minutes · £[price]</span></div></div>
+      <div class="aside-stat"><span class="icon">🌿</span><div><strong>Herbal prescriptions</strong><span>Individually formulated; dispensed or posted</span></div></div>
+      <div class="aside-stat"><span class="icon">💊</span><div><strong>Supplements</strong><span>Practitioner-grade; prescribed at therapeutic doses</span></div></div>
+      <a href="#book" class="book-btn">Book a Naturopathy Consultation</a>
+      <a href="#discovery" class="discovery-link">Or start with a free 15-min discovery call</a>
+    </div>
+  </div>
+</div>
+
+<!-- FUNCTIONAL TESTING -->
+<section class="testing" id="testing">
+  <div class="section-label" style="color:#3ab5a5">Advanced Testing</div>
+  <h2 class="serif" style="color:#fff; font-family:'Playfair Display',serif; font-size:2.2rem; margin-bottom:0.75rem;">The tests that change everything</h2>
+  <p class="sub" style="color:#94a3b8">Standard NHS blood panels are designed to detect disease. These tests detect dysfunction — the gap where most unexplained symptoms live.</p>
+  <div class="tests-grid">
+    <div class="test-card">
+      <div class="why">Hormones</div>
+      <h4>DUTCH Complete Hormone Test</h4>
+      <p>Dried urine test mapping oestrogen metabolism pathways, progesterone, testosterone, DHEA, and 24-hour cortisol rhythm. The gold standard for hormonal investigation — far beyond a single blood draw.</p>
+    </div>
+    <div class="test-card">
+      <div class="why">Gut Health</div>
+      <h4>Comprehensive Stool Analysis</h4>
+      <p>Microbiome mapping: bacterial diversity, pathogen presence, inflammatory markers, intestinal permeability (zonulin), digestive enzyme function, and short-chain fatty acid production.</p>
+    </div>
+    <div class="test-card">
+      <div class="why">Gut Health</div>
+      <h4>SIBO Breath Test</h4>
+      <p>Lactulose and glucose breath testing to detect small intestinal bacterial overgrowth — the most commonly missed cause of IBS, bloating, and associated fatigue and brain fog.</p>
+    </div>
+    <div class="test-card">
+      <div class="why">Thyroid</div>
+      <h4>Advanced Thyroid Panel</h4>
+      <p>TSH, Free T3, Free T4, Reverse T3, TPO antibodies, and thyroglobulin antibodies — the complete picture that identifies subclinical hypothyroidism and Hashimoto's missed by standard TSH alone.</p>
+    </div>
+    <div class="test-card">
+      <div class="why">Nutrients</div>
+      <h4>Intracellular Nutrient Panel</h4>
+      <p>Intracellular (not serum) levels of magnesium, zinc, B vitamins, CoQ10, omega-3 index, vitamin D, and ferritin. Reveals deficiencies that standard blood tests routinely miss.</p>
+    </div>
+    <div class="test-card">
+      <div class="why">Food Sensitivities</div>
+      <h4>IgG Food Sensitivity Testing</h4>
+      <p>Delayed immune reactions (IgG) to 200+ foods — distinct from IgE allergies. Identifies food triggers driving inflammation, gut symptoms, joint pain, skin conditions, and fatigue.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta" id="book">
+  <h2>Ready to find your root cause?</h2>
+  <p>Book your first consultation or start with a free 15-minute discovery call to find the right service for you.</p>
+  <div class="cta-btns">
+    <a href="#" class="btn-white">Book a Consultation</a>
+    <a href="#" class="btn-outline-w">Free Discovery Call</a>
+  </div>
+</section>
+
+<footer>
+  <div class="logo">Insight<span style="color:var(--teal)">Clinic</span></div>
+  <p>24 Chapel Market, Islington N1 9EZ · insightclinic.care · All practitioners registered with their relevant UK regulatory body</p>
+  <p style="color:#64748b; font-size:0.82rem">© 2025 Insight Clinic</p>
+</footer>
+
+</body>
+</html>
