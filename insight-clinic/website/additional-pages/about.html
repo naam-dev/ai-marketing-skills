@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Our Team — Insight Clinic Islington</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #1a2e4a; --navy-light: #243d60; --teal: #2a9d8f; --teal-light: #3ab5a5;
+      --white: #ffffff; --off-white: #f8fafc; --grey-light: #f1f5f9;
+      --grey: #94a3b8; --grey-dark: #475569; --text: #1e293b;
+    }
+    body { font-family: 'Inter', sans-serif; color: var(--text); background: var(--white); }
+    a { text-decoration: none; color: inherit; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100; background: var(--white);
+      border-bottom: 1px solid #e2e8f0; padding: 0 5%;
+      display: flex; align-items: center; justify-content: space-between; height: 72px;
+    }
+    .logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--navy); font-weight: 600; }
+    .logo span { color: var(--teal); }
+    .nav-links { display: flex; gap: 2rem; font-size: 0.9rem; font-weight: 500; color: var(--grey-dark); }
+    .nav-links a:hover { color: var(--teal); }
+    .nav-links a.active { color: var(--teal); }
+    .nav-cta { background: var(--teal); color: #fff; padding: 0.6rem 1.4rem; border-radius: 6px; font-size: 0.9rem; font-weight: 600; }
+
+    .page-header { background: linear-gradient(135deg, var(--navy), var(--navy-light)); padding: 5rem 5%; }
+    .page-header .breadcrumb { font-size: 0.82rem; color: rgba(255,255,255,0.5); margin-bottom: 1rem; }
+    .page-header h1 { font-family: 'Playfair Display', serif; font-size: 3rem; color: #fff; margin-bottom: 1rem; }
+    .page-header p { color: rgba(255,255,255,0.7); font-size: 1.05rem; max-width: 600px; line-height: 1.7; }
+
+    section { padding: 5rem 5%; }
+    .section-label { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal); margin-bottom: 0.6rem; }
+    h2.serif { font-family: 'Playfair Display', serif; font-size: 2.4rem; color: var(--navy); margin-bottom: 1rem; line-height: 1.2; }
+    .sub { font-size: 1rem; color: var(--grey-dark); line-height: 1.75; max-width: 600px; }
+
+    /* MISSION */
+    .mission { background: var(--off-white); }
+    .mission-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+    .mission p { color: var(--grey-dark); line-height: 1.8; margin-bottom: 1rem; font-size: 1.02rem; }
+    .mission-values { margin-top: 2rem; display: flex; flex-direction: column; gap: 1rem; }
+    .value-item { display: flex; gap: 1rem; align-items: flex-start; }
+    .value-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--teal); flex-shrink: 0; margin-top: 6px; }
+    .value-item strong { display: block; color: var(--navy); margin-bottom: 0.2rem; }
+    .value-item p { font-size: 0.9rem; color: var(--grey-dark); margin: 0; }
+    .mission-stat-box { background: var(--navy); border-radius: 20px; padding: 3rem; color: #fff; }
+    .mission-stat-box h3 { font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 2rem; color: #fff; }
+    .mstat { padding: 1.2rem 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .mstat:last-child { border-bottom: none; }
+    .mstat .num { font-size: 2.5rem; font-weight: 700; color: var(--teal-light); line-height: 1; }
+    .mstat .label { font-size: 0.85rem; color: var(--grey); margin-top: 0.25rem; }
+
+    /* TEAM */
+    .team-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; margin-top: 3rem; }
+    .practitioner-card { background: var(--off-white); border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; display: grid; grid-template-columns: 200px 1fr; }
+    .prac-photo { background: linear-gradient(135deg, #e2e8f0, #cbd5e1); display: flex; align-items: center; justify-content: center; color: var(--grey); font-size: 0.82rem; min-height: 240px; flex-shrink: 0; }
+    .prac-info { padding: 2rem; }
+    .prac-info h3 { color: var(--navy); font-weight: 700; font-size: 1.1rem; margin-bottom: 0.2rem; }
+    .prac-role { color: var(--teal); font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .prac-reg { font-size: 0.78rem; color: var(--grey); margin-bottom: 1rem; }
+    .prac-info p { font-size: 0.9rem; color: var(--grey-dark); line-height: 1.65; margin-bottom: 0.75rem; }
+    .prac-specialisms { margin-top: 1rem; }
+    .prac-specialisms span { display: inline-block; background: var(--grey-light); color: var(--grey-dark); font-size: 0.78rem; padding: 0.2rem 0.6rem; border-radius: 20px; margin: 0.2rem 0.2rem 0 0; font-weight: 500; }
+
+    /* APPROACH */
+    .approach { background: var(--navy); color: #fff; }
+    .approach h2 { color: #fff; font-family: 'Playfair Display', serif; font-size: 2.2rem; margin-bottom: 1rem; }
+    .approach .sub { color: #94a3b8; }
+    .approach-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3rem; }
+    .approach-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 2rem; }
+    .approach-card .icon { font-size: 2rem; margin-bottom: 1rem; }
+    .approach-card h4 { color: #fff; font-weight: 600; margin-bottom: 0.5rem; }
+    .approach-card p { font-size: 0.88rem; color: #94a3b8; line-height: 1.65; }
+
+    /* CREDENTIALS */
+    .creds { background: var(--grey-light); }
+    .creds-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-top: 2.5rem; }
+    .cred-item { background: #fff; border-radius: 12px; padding: 1.5rem; text-align: center; border: 1px solid #e2e8f0; }
+    .cred-item .body-logo { font-size: 1.8rem; margin-bottom: 0.5rem; }
+    .cred-item strong { display: block; color: var(--navy); font-size: 0.9rem; margin-bottom: 0.3rem; }
+    .cred-item p { font-size: 0.8rem; color: var(--grey-dark); line-height: 1.5; }
+
+    /* CTA */
+    .cta { background: var(--teal); text-align: center; padding: 5rem 5%; }
+    .cta h2 { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: #fff; margin-bottom: 0.75rem; }
+    .cta p { color: rgba(255,255,255,0.85); margin-bottom: 2rem; font-size: 1rem; max-width: 480px; margin-left: auto; margin-right: auto; }
+    .cta-btns { display: flex; gap: 1rem; justify-content: center; }
+    .btn-white { background: #fff; color: var(--teal); padding: 0.9rem 2rem; border-radius: 8px; font-weight: 700; }
+    .btn-outline-w { border: 2px solid rgba(255,255,255,0.5); color: #fff; padding: 0.9rem 2rem; border-radius: 8px; font-weight: 600; }
+
+    footer { background: #0f1c2d; padding: 2.5rem 5%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    footer .logo { color: #fff; }
+    footer p { color: #475569; font-size: 0.85rem; }
+
+    @media (max-width: 900px) {
+      .mission-grid { grid-template-columns: 1fr; }
+      .team-grid { grid-template-columns: 1fr; }
+      .practitioner-card { grid-template-columns: 1fr; }
+      .prac-photo { min-height: 180px; }
+      .approach-grid { grid-template-columns: 1fr; }
+      .creds-grid { grid-template-columns: 1fr 1fr; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Insight<span>Clinic</span></div>
+  <div class="nav-links">
+    <a href="../concept-a/index.html">Home</a>
+    <a href="services.html">Services</a>
+    <a href="about.html" class="active">Our Team</a>
+    <a href="new-patients.html">New Patients</a>
+    <a href="faq.html">FAQs</a>
+  </div>
+  <a href="#book" class="nav-cta">Book a Consultation</a>
+</nav>
+
+<div class="page-header">
+  <div class="breadcrumb">Home → Our Team</div>
+  <h1>Our Team</h1>
+  <p>Experienced, registered practitioners who share one philosophy: find the root cause. We collaborate on complex cases so you get every perspective — not just one.</p>
+</div>
+
+<!-- MISSION -->
+<section class="mission">
+  <div class="mission-grid">
+    <div>
+      <div class="section-label">Our Philosophy</div>
+      <h2 class="serif">Medicine that treats people, not diagnoses</h2>
+      <p>Insight Clinic was founded on a simple frustration: too many patients were being told they were fine when they clearly weren't. Standard medicine is excellent at detecting serious disease — but there's a significant gap between "no disease detected" and "thriving". Most persistent, unexplained symptoms live in that gap.</p>
+      <p>We built Insight Clinic to address that gap. Every practitioner on our team shares a commitment to spending time, running the right tests, and building treatment plans around the actual root cause — not the most convenient label.</p>
+      <div class="mission-values">
+        <div class="value-item"><div class="value-dot"></div><div><strong>Root-cause first</strong><p>We ask why — always. Symptom management without understanding the driver is incomplete medicine.</p></div></div>
+        <div class="value-item"><div class="value-dot"></div><div><strong>Evidence-informed</strong><p>We use herbal, nutritional, and physical therapies that have a clinical evidence base — not wellness trends.</p></div></div>
+        <div class="value-item"><div class="value-dot"></div><div><strong>Genuinely collaborative</strong><p>Our practitioners talk to each other about complex cases. You benefit from multiple clinical perspectives.</p></div></div>
+        <div class="value-item"><div class="value-dot"></div><div><strong>Respectful of your history</strong><p>We don't dismiss previous treatment. We build on it — adding what was missing.</p></div></div>
+      </div>
+    </div>
+    <div class="mission-stat-box">
+      <h3>Insight Clinic by the numbers</h3>
+      <div class="mstat"><div class="num">12+</div><div class="label">Years practising integrative medicine in Islington</div></div>
+      <div class="mstat"><div class="num">1,000+</div><div class="label">Patients seen across all disciplines</div></div>
+      <div class="mstat"><div class="num">4.9★</div><div class="label">Average Google review rating from 60+ verified reviews</div></div>
+      <div class="mstat"><div class="num">6</div><div class="label">Disciplines available under one roof</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section>
+  <div class="section-label">The Practitioners</div>
+  <h2 class="serif">Meet the team</h2>
+  <p class="sub">Every practitioner at Insight Clinic is registered with their relevant UK regulatory body and practices within their scope.</p>
+  <div class="team-grid">
+
+    <div class="practitioner-card">
+      <div class="prac-photo">📸 Headshot</div>
+      <div class="prac-info">
+        <h3>[Practitioner Name]</h3>
+        <div class="prac-role">Lead Integrative GP</div>
+        <div class="prac-reg">MBChB · MRCGP · Integrative Medicine Diploma</div>
+        <p>Trained in conventional medicine before completing advanced training in integrative and functional medicine. Has been practising at Insight Clinic since its founding, with a particular interest in complex chronic conditions and unexplained fatigue.</p>
+        <p>Frequently presents on integrative approaches to fatigue and hormonal health at local GP education events.</p>
+        <div class="prac-specialisms">
+          <span>Chronic fatigue</span><span>Autoimmunity</span><span>Thyroid</span><span>Functional testing</span><span>Long COVID</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="practitioner-card">
+      <div class="prac-photo">📸 Headshot</div>
+      <div class="prac-info">
+        <h3>[Practitioner Name]</h3>
+        <div class="prac-role">Senior Acupuncturist</div>
+        <div class="prac-reg">BSc (Hons) Acupuncture · BAcC Registered · CNHC Accredited</div>
+        <p>Has been practising acupuncture for over 10 years, with a specialism in women's health, fertility, and pain management. Takes a deeply clinical approach and stays closely up to date with the evolving evidence base for acupuncture.</p>
+        <p>Member of the British Acupuncture Council's fertility special interest group.</p>
+        <div class="prac-specialisms">
+          <span>Fertility</span><span>Women's health</span><span>Chronic pain</span><span>Anxiety</span><span>Hormones</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="practitioner-card">
+      <div class="prac-photo">📸 Headshot</div>
+      <div class="prac-info">
+        <h3>[Practitioner Name]</h3>
+        <div class="prac-role">Nutritional Therapist</div>
+        <div class="prac-reg">MSc Nutritional Therapy · mBANT · CNHC Registered</div>
+        <p>Holds a Masters in Nutritional Therapy and specialises in gut health, hormonal conditions, and the nutritional management of autoimmune disease. Works closely with the integrative GP on complex cases, particularly where advanced functional testing is indicated.</p>
+        <div class="prac-specialisms">
+          <span>Gut health</span><span>SIBO</span><span>PCOS</span><span>Perimenopause</span><span>Autoimmunity</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="practitioner-card">
+      <div class="prac-photo">📸 Headshot</div>
+      <div class="prac-info">
+        <h3>[Practitioner Name]</h3>
+        <div class="prac-role">Osteopath</div>
+        <div class="prac-reg">BSc (Hons) Osteopathy · GOsC Registered · iO Member</div>
+        <p>Practising osteopath with extensive experience treating musculoskeletal pain in an integrative setting. Takes a whole-body approach and frequently collaborates with the nutritional therapist on patients where inflammation or nutritional factors are driving structural symptoms.</p>
+        <div class="prac-specialisms">
+          <span>Back pain</span><span>Sports injury</span><span>Headaches</span><span>Sciatica</span><span>Postural dysfunction</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- APPROACH -->
+<section class="approach">
+  <div class="section-label" style="color:#3ab5a5">How We Work</div>
+  <h2>What makes us different</h2>
+  <p class="sub">Three things that distinguish care at Insight Clinic from what you may have experienced elsewhere.</p>
+  <div class="approach-grid">
+    <div class="approach-card">
+      <div class="icon">⏱</div>
+      <h4>We take time</h4>
+      <p>Initial appointments are 60–90 minutes. You will not be rushed. Everything you tell us matters — we're looking for patterns that a 10-minute appointment can't surface.</p>
+    </div>
+    <div class="approach-card">
+      <div class="icon">🔬</div>
+      <h4>We test properly</h4>
+      <p>We order functional tests that standard medicine doesn't routinely run — and we interpret them in the context of your full clinical picture, not just against a lab reference range.</p>
+    </div>
+    <div class="approach-card">
+      <div class="icon">🤝</div>
+      <h4>We collaborate</h4>
+      <p>Complex cases are reviewed across disciplines. Your nutritional therapist and GP may both have input on your treatment. You don't get one perspective — you get the right one.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CREDENTIALS -->
+<section class="creds">
+  <div class="section-label">Regulation & Standards</div>
+  <h2 class="serif">Registered, regulated, rigorous</h2>
+  <p class="sub">All Insight Clinic practitioners are registered with their relevant UK professional regulatory body and practise within their defined scope.</p>
+  <div class="creds-grid">
+    <div class="cred-item">
+      <div class="body-logo">🏛</div>
+      <strong>British Acupuncture Council</strong>
+      <p>BAcC is the leading self-regulatory body for acupuncture in the UK, ensuring safe and ethical practice.</p>
+    </div>
+    <div class="cred-item">
+      <div class="body-logo">🏛</div>
+      <strong>BANT</strong>
+      <p>British Association for Nutrition and Lifestyle Medicine — the professional body for nutritional therapists.</p>
+    </div>
+    <div class="cred-item">
+      <div class="body-logo">🏛</div>
+      <strong>General Osteopathic Council</strong>
+      <p>GOsC is a statutory regulator for osteopathy under the Osteopaths Act 1993. Registration is legally required to practise.</p>
+    </div>
+    <div class="cred-item">
+      <div class="body-logo">🏛</div>
+      <strong>General Medical Council</strong>
+      <p>All medical doctors at Insight Clinic are GMC-registered, with a licence to practise in the UK.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta" id="book">
+  <h2>We'd love to meet you</h2>
+  <p>Book your first consultation or start with a free 15-minute discovery call — no commitment, just a conversation.</p>
+  <div class="cta-btns">
+    <a href="#" class="btn-white">Book a Consultation</a>
+    <a href="#" class="btn-outline-w">Free Discovery Call</a>
+  </div>
+</section>
+
+<footer>
+  <div class="logo">Insight<span style="color:var(--teal)">Clinic</span></div>
+  <p>24 Chapel Market, Islington N1 9EZ · insightclinic.care</p>
+  <p style="color:#64748b; font-size:0.82rem">© 2025 Insight Clinic</p>
+</footer>
+
+</body>
+</html>

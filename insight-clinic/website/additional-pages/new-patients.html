@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Patients — Insight Clinic Islington</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #1a2e4a; --navy-light: #243d60; --teal: #2a9d8f; --teal-light: #3ab5a5;
+      --gold: #e9c46a; --white: #ffffff; --off-white: #f8fafc; --grey-light: #f1f5f9;
+      --grey: #94a3b8; --grey-dark: #475569; --text: #1e293b;
+    }
+    body { font-family: 'Inter', sans-serif; color: var(--text); background: var(--white); }
+    a { text-decoration: none; color: inherit; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100; background: var(--white);
+      border-bottom: 1px solid #e2e8f0; padding: 0 5%;
+      display: flex; align-items: center; justify-content: space-between; height: 72px;
+    }
+    .logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--navy); font-weight: 600; }
+    .logo span { color: var(--teal); }
+    .nav-links { display: flex; gap: 2rem; font-size: 0.9rem; font-weight: 500; color: var(--grey-dark); }
+    .nav-links a:hover { color: var(--teal); }
+    .nav-links a.active { color: var(--teal); }
+    .nav-cta { background: var(--teal); color: #fff; padding: 0.6rem 1.4rem; border-radius: 6px; font-size: 0.9rem; font-weight: 600; }
+
+    .page-header { background: linear-gradient(135deg, var(--navy), var(--navy-light)); padding: 5rem 5%; }
+    .page-header .breadcrumb { font-size: 0.82rem; color: rgba(255,255,255,0.5); margin-bottom: 1rem; }
+    .page-header h1 { font-family: 'Playfair Display', serif; font-size: 3rem; color: #fff; margin-bottom: 1rem; }
+    .page-header p { color: rgba(255,255,255,0.7); font-size: 1.05rem; max-width: 580px; line-height: 1.7; }
+
+    section { padding: 5rem 5%; }
+    .section-label { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal); margin-bottom: 0.6rem; }
+    h2.serif { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--navy); margin-bottom: 1rem; line-height: 1.2; }
+    .sub { font-size: 1rem; color: var(--grey-dark); line-height: 1.75; max-width: 600px; }
+
+    /* REASSURANCE STRIP */
+    .reassure { background: var(--teal); padding: 2rem 5%; }
+    .reassure-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; }
+    .reassure-item { text-align: center; }
+    .reassure-item .icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
+    .reassure-item strong { display: block; color: #fff; font-size: 0.9rem; margin-bottom: 0.2rem; }
+    .reassure-item p { color: rgba(255,255,255,0.8); font-size: 0.82rem; }
+
+    /* JOURNEY STEPS */
+    .journey { background: var(--off-white); }
+    .journey-steps { margin-top: 3rem; display: flex; flex-direction: column; gap: 0; }
+    .jstep {
+      display: grid; grid-template-columns: 80px 1fr; gap: 2rem;
+      padding: 2.5rem 0; border-bottom: 1px solid #e2e8f0; align-items: start;
+    }
+    .jstep:first-child { padding-top: 0; }
+    .jstep:last-child { border-bottom: none; }
+    .jstep-num {
+      width: 56px; height: 56px; border-radius: 50%; background: var(--navy);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 600;
+      flex-shrink: 0;
+    }
+    .jstep h3 { color: var(--navy); font-weight: 700; margin-bottom: 0.5rem; font-size: 1.1rem; }
+    .jstep p { color: var(--grey-dark); line-height: 1.7; font-size: 0.95rem; margin-bottom: 0.75rem; }
+    .jstep .tip { background: #fff; border-left: 3px solid var(--teal); padding: 0.75rem 1rem; border-radius: 0 8px 8px 0; font-size: 0.88rem; color: var(--grey-dark); margin-top: 0.5rem; }
+    .jstep .tip strong { color: var(--navy); }
+
+    /* WHAT TO EXPECT */
+    .expect-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+    .expect-card { background: var(--off-white); border-radius: 16px; padding: 2rem; border: 1px solid #e2e8f0; }
+    .expect-card h4 { color: var(--navy); font-weight: 700; margin-bottom: 1rem; font-size: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .expect-card ul { list-style: none; }
+    .expect-card li { padding: 0.5rem 0; border-bottom: 1px solid #e2e8f0; font-size: 0.9rem; color: var(--grey-dark); display: flex; gap: 0.6rem; }
+    .expect-card li:last-child { border-bottom: none; }
+    .check { color: var(--teal); }
+    .cross { color: #ef4444; }
+
+    /* BOOKING FORM */
+    .booking { background: var(--navy); }
+    .booking-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+    .booking h2 { color: #fff; font-family: 'Playfair Display', serif; font-size: 2.2rem; margin-bottom: 0.75rem; }
+    .booking .sub { color: #94a3b8; }
+    .booking-assurance { margin-top: 2rem; display: flex; flex-direction: column; gap: 1rem; }
+    .ba-item { display: flex; gap: 0.75rem; align-items: flex-start; }
+    .ba-check { color: var(--teal-light); font-weight: 700; margin-top: 2px; flex-shrink: 0; }
+    .ba-item p { font-size: 0.9rem; color: #94a3b8; line-height: 1.5; }
+    .ba-item strong { color: #fff; }
+
+    /* FORM */
+    .booking-form { background: #fff; border-radius: 16px; padding: 2.5rem; }
+    .booking-form h3 { color: var(--navy); font-weight: 700; margin-bottom: 0.25rem; font-size: 1.1rem; }
+    .booking-form .form-sub { color: var(--grey-dark); font-size: 0.88rem; margin-bottom: 2rem; }
+    .form-row { margin-bottom: 1.2rem; }
+    .form-row label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--navy); margin-bottom: 0.4rem; }
+    .form-row input, .form-row select, .form-row textarea {
+      width: 100%; padding: 0.75rem 1rem; border: 1.5px solid #e2e8f0;
+      border-radius: 8px; font-size: 0.9rem; font-family: 'Inter', sans-serif;
+      color: var(--text); outline: none; transition: border-color 0.2s;
+    }
+    .form-row input:focus, .form-row select:focus, .form-row textarea:focus { border-color: var(--teal); }
+    .form-row textarea { resize: vertical; min-height: 100px; }
+    .form-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-submit { background: var(--teal); color: #fff; width: 100%; padding: 0.9rem; border-radius: 8px; border: none; font-size: 1rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; transition: background 0.2s; }
+    .form-submit:hover { background: var(--teal-light); }
+    .form-note { font-size: 0.78rem; color: var(--grey); margin-top: 0.75rem; text-align: center; }
+
+    /* PRACTICAL INFO */
+    .practical { background: var(--grey-light); }
+    .practical-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 2.5rem; }
+    .prac-card { background: #fff; border-radius: 12px; padding: 1.8rem; border: 1px solid #e2e8f0; }
+    .prac-card .icon { font-size: 2rem; margin-bottom: 1rem; }
+    .prac-card h4 { color: var(--navy); font-weight: 700; margin-bottom: 0.75rem; }
+    .prac-card p, .prac-card li { font-size: 0.88rem; color: var(--grey-dark); line-height: 1.7; }
+    .prac-card ul { list-style: none; }
+    .prac-card li { padding: 0.2rem 0; }
+
+    footer { background: #0f1c2d; padding: 2.5rem 5%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    footer .logo { color: #fff; }
+    footer p { color: #475569; font-size: 0.85rem; }
+
+    @media (max-width: 900px) {
+      .reassure-grid { grid-template-columns: 1fr 1fr; }
+      .jstep { grid-template-columns: 60px 1fr; }
+      .expect-grid { grid-template-columns: 1fr; }
+      .booking-grid { grid-template-columns: 1fr; }
+      .practical-grid { grid-template-columns: 1fr; }
+      .form-2col { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Insight<span>Clinic</span></div>
+  <div class="nav-links">
+    <a href="../concept-a/index.html">Home</a>
+    <a href="services.html">Services</a>
+    <a href="about.html">Our Team</a>
+    <a href="new-patients.html" class="active">New Patients</a>
+    <a href="faq.html">FAQs</a>
+  </div>
+  <a href="#book" class="nav-cta">Book a Consultation</a>
+</nav>
+
+<div class="page-header">
+  <div class="breadcrumb">Home → New Patients</div>
+  <h1>New Patients</h1>
+  <p>Everything you need to know before your first appointment — so you can arrive prepared, not anxious.</p>
+</div>
+
+<!-- REASSURANCE STRIP -->
+<div class="reassure">
+  <div class="reassure-grid">
+    <div class="reassure-item"><div class="icon">🕐</div><strong>60–90 min first appointment</strong><p>We take time. You won't be rushed.</p></div>
+    <div class="reassure-item"><div class="icon">📋</div><strong>No referral needed</strong><p>Book directly — no GP letter required.</p></div>
+    <div class="reassure-item"><div class="icon">💬</div><strong>Free discovery call</strong><p>15 minutes to see if we're the right fit.</p></div>
+    <div class="reassure-item"><div class="icon">📍</div><strong>2 mins from Angel tube</strong><p>24 Chapel Market, N1 9EZ.</p></div>
+  </div>
+</div>
+
+<!-- JOURNEY -->
+<section class="journey">
+  <div class="section-label">Your First Visit</div>
+  <h2 class="serif">What happens, step by step</h2>
+  <p class="sub">We've designed every step to be as clear and low-friction as possible — because starting somewhere new can feel daunting.</p>
+
+  <div class="journey-steps">
+    <div class="jstep">
+      <div class="jstep-num">1</div>
+      <div>
+        <h3>Book your appointment (or start with a discovery call)</h3>
+        <p>Use the booking form on this page or call us directly. If you're not sure which service is right for you, our free 15-minute discovery call lets you speak with a practitioner before committing to a full appointment.</p>
+        <div class="tip"><strong>Tip:</strong> If you have existing blood test results or GP letters, note that in your booking so we can review them in advance.</div>
+      </div>
+    </div>
+    <div class="jstep">
+      <div class="jstep-num">2</div>
+      <div>
+        <h3>Complete your intake questionnaire</h3>
+        <p>We'll send a detailed intake form by email once your booking is confirmed. It covers your symptoms, medical history, lifestyle, medications, and what you're hoping to achieve. Please complete it at least 48 hours before your appointment — it allows your practitioner to prepare properly and means your session is spent on the consultation, not form-filling.</p>
+        <div class="tip"><strong>Tip:</strong> Be as thorough as you can. Even symptoms that seem unrelated are often relevant — connections between them are frequently where we find the root cause.</div>
+      </div>
+    </div>
+    <div class="jstep">
+      <div class="jstep-num">3</div>
+      <div>
+        <h3>Your first appointment — 60 to 90 minutes</h3>
+        <p>Your practitioner will have reviewed your intake form before you arrive. The appointment is a proper conversation — your full history, a chance to ask questions, and a thorough clinical assessment. We don't rush to conclusions. By the end, you'll have a clear sense of what we think is driving your symptoms and what we'd like to investigate or treat.</p>
+        <div class="tip"><strong>Tip:</strong> Bring any previous blood test results, scan reports, or specialist letters. Even results from years ago can be useful context.</div>
+      </div>
+    </div>
+    <div class="jstep">
+      <div class="jstep-num">4</div>
+      <div>
+        <h3>Testing (where indicated)</h3>
+        <p>If functional testing is appropriate, we'll order it at or after your first appointment. Most tests involve a blood draw, urine collection, or stool sample done at home or at our clinic — we'll walk you through each one clearly. Results typically come back within 1–3 weeks depending on the panel.</p>
+        <div class="tip"><strong>Tip:</strong> Don't supplement with high-dose vitamins in the 5 days before any nutrient testing — it can skew results. We'll remind you of this in your pre-appointment notes.</div>
+      </div>
+    </div>
+    <div class="jstep">
+      <div class="jstep-num">5</div>
+      <div>
+        <h3>Results review and treatment plan</h3>
+        <p>Once results are in, we'll book a review appointment to go through them in full and build your treatment plan. This is a detailed, personalised document — not a generic protocol. It covers nutrition, supplementation, lifestyle recommendations, and any therapies we're recommending, along with the rationale for each.</p>
+        <div class="tip"><strong>Tip:</strong> Write down questions between your first appointment and your results review. Patients who come with specific questions get more from this session.</div>
+      </div>
+    </div>
+    <div class="jstep">
+      <div class="jstep-num">6</div>
+      <div>
+        <h3>Ongoing care and review</h3>
+        <p>We track your progress against measurable markers — not just how you feel subjectively. Follow-up appointments are typically every 4–6 weeks initially, spacing out as you improve. We adjust your plan as your results shift and your needs change.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT TO EXPECT / NOT EXPECT -->
+<section>
+  <div class="section-label">Setting Expectations</div>
+  <h2 class="serif">What integrative care is — and isn't</h2>
+  <p class="sub">We want you to arrive knowing exactly what kind of care we provide and what to expect from working with us.</p>
+  <div class="expect-grid">
+    <div class="expect-card">
+      <h4>✅ You can expect</h4>
+      <ul>
+        <li><span class="check">✓</span> A practitioner who reads your notes before you arrive</li>
+        <li><span class="check">✓</span> A first appointment of at least 60 minutes</li>
+        <li><span class="check">✓</span> Advanced functional testing beyond standard NHS panels</li>
+        <li><span class="check">✓</span> A treatment plan with clear rationale for each recommendation</li>
+        <li><span class="check">✓</span> Honest timelines — we won't promise results we can't deliver</li>
+        <li><span class="check">✓</span> Collaboration with your GP if appropriate</li>
+        <li><span class="check">✓</span> Written summaries you can share with other clinicians</li>
+        <li><span class="check">✓</span> Practitioners who refer out when something is outside their scope</li>
+      </ul>
+    </div>
+    <div class="expect-card">
+      <h4>❌ We are not</h4>
+      <ul>
+        <li><span class="cross">✗</span> An emergency or urgent care service — for emergencies, call 999 or attend A&E</li>
+        <li><span class="cross">✗</span> A replacement for NHS primary care — we complement it</li>
+        <li><span class="cross">✗</span> A quick fix — root-cause medicine takes time and commitment</li>
+        <li><span class="cross">✗</span> A supplement shop — we prescribe therapeutically, not commercially</li>
+        <li><span class="cross">✗</span> Able to prescribe NHS medications (though our integrative GP can prescribe privately where appropriate)</li>
+        <li><span class="cross">✗</span> Able to guarantee outcomes — we can only work with evidence and your honest engagement with the process</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- BOOKING -->
+<section class="booking" id="book">
+  <div class="booking-grid">
+    <div>
+      <div class="section-label" style="color:#3ab5a5">Book Your Appointment</div>
+      <h2>Ready to get started?</h2>
+      <p class="sub">Fill in the form and we'll confirm your appointment within one working day. Or call us directly on [phone number].</p>
+      <div class="booking-assurance">
+        <div class="ba-item"><span class="ba-check">✓</span><p><strong>No referral letter needed.</strong> Book directly — we're a private clinic.</p></div>
+        <div class="ba-item"><span class="ba-check">✓</span><p><strong>Free 15-min discovery call available.</strong> Not sure which service is right? Tick the discovery call option and speak with a practitioner first.</p></div>
+        <div class="ba-item"><span class="ba-check">✓</span><p><strong>Cancellation policy:</strong> 48 hours notice for a full refund. Within 48 hours: 50% refund.</p></div>
+        <div class="ba-item"><span class="ba-check">✓</span><p><strong>Intake form sent by email</strong> once your booking is confirmed. Please complete it 48 hours before your appointment.</p></div>
+      </div>
+    </div>
+    <div class="booking-form">
+      <h3>Book a consultation</h3>
+      <p class="form-sub">We'll confirm within one working day.</p>
+      <div class="form-2col">
+        <div class="form-row"><label>First name *</label><input type="text" placeholder="Emma"></div>
+        <div class="form-row"><label>Last name *</label><input type="text" placeholder="Thompson"></div>
+      </div>
+      <div class="form-row"><label>Email address *</label><input type="email" placeholder="emma@email.com"></div>
+      <div class="form-row"><label>Phone number *</label><input type="tel" placeholder="07700 000 000"></div>
+      <div class="form-row">
+        <label>Service interested in *</label>
+        <select>
+          <option value="">— Select a service —</option>
+          <option>Free 15-min discovery call</option>
+          <option>Integrative GP consultation</option>
+          <option>Acupuncture</option>
+          <option>Nutritional therapy</option>
+          <option>Osteopathy</option>
+          <option>Naturopathy</option>
+          <option>Not sure — please advise</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Briefly describe your main concern</label>
+        <textarea placeholder="e.g. Chronic fatigue for 2 years, told bloods are normal. Also experiencing gut issues and poor sleep."></textarea>
+      </div>
+      <div class="form-row">
+        <label>How did you hear about us?</label>
+        <select>
+          <option value="">— Select —</option>
+          <option>Google search</option>
+          <option>Google Maps</option>
+          <option>Referred by a patient</option>
+          <option>Referred by a GP or practitioner</option>
+          <option>Instagram / social media</option>
+          <option>Local studio or gym</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <button class="form-submit">Request My Appointment</button>
+      <p class="form-note">🔒 Your information is handled in accordance with our privacy policy and GDPR. We will never share your details with third parties.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRACTICAL INFO -->
+<section class="practical">
+  <div class="section-label">Getting Here</div>
+  <h2 class="serif">Practical information</h2>
+  <div class="practical-grid">
+    <div class="prac-card">
+      <div class="icon">📍</div>
+      <h4>Location</h4>
+      <p>24 Chapel Market<br>Islington<br>London N1 9EZ</p>
+      <p style="margin-top:0.75rem">We're on Chapel Market, a short walk from Angel tube station. Look for [landmark description].</p>
+    </div>
+    <div class="prac-card">
+      <div class="icon">🚇</div>
+      <h4>Getting here</h4>
+      <ul>
+        <li>🟦 <strong>Angel tube</strong> — 2 min walk (Northern line)</li>
+        <li>🚌 <strong>Bus</strong> — routes 19, 38, 341 stop on Upper Street</li>
+        <li>🚲 <strong>Cycle</strong> — Santander hire point on Chapel Market</li>
+        <li>🚗 <strong>Car</strong> — Limited parking; Islington CPZ in effect Mon–Sat</li>
+      </ul>
+    </div>
+    <div class="prac-card">
+      <div class="icon">🕐</div>
+      <h4>Opening hours</h4>
+      <ul>
+        <li>Monday — Friday: 8:00am – 7:00pm</li>
+        <li>Saturday: 9:00am – 2:00pm</li>
+        <li>Sunday: Closed</li>
+        <li style="margin-top:0.5rem; color:var(--teal); font-weight:600">Evening appointments available Monday, Wednesday, Thursday</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="logo">Insight<span style="color:var(--teal)">Clinic</span></div>
+  <p>24 Chapel Market, Islington N1 9EZ · insightclinic.care</p>
+  <p style="color:#64748b; font-size:0.82rem">© 2025 Insight Clinic</p>
+</footer>
+
+</body>
+</html>
