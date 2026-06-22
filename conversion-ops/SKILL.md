@@ -1,3 +1,13 @@
+---
+name: conversion-ops
+description: >-
+  AI conversion rate optimization — landing page audits, CRO scoring across 8
+  dimensions, survey segmentation, and lead-magnet generation. Use when asked to:
+  "audit this landing page", "CRO analysis", "score this page for conversion",
+  "find conversion bottlenecks", "segment this survey data", "generate lead
+  magnet ideas", or for batch CRO across multiple URLs.
+---
+
 # AI Conversion Ops
 
 ## Preamble (runs on skill start)

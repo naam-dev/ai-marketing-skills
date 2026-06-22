@@ -1,3 +1,14 @@
+---
+name: sales-pipeline
+description: >-
+  End-to-end AI sales pipeline automation — website visitor ID (RB2B), intent
+  scoring, suppression, cold-email campaign routing, dead-deal resurrection,
+  trigger prospecting, and self-learning ICP optimization. Use when asked to:
+  "set up RB2B outbound", "run suppression checks", "route leads to campaigns",
+  "revive closed-lost deals", "find companies with buying signals", or "improve
+  ICP targeting".
+---
+
 # AI Sales Pipeline
 
 ## Preamble (runs on skill start)
