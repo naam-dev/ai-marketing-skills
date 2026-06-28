@@ -25,6 +25,7 @@ These aren't prompts. They're complete workflows — scripts, scoring algorithms
 | [**Deck Generator**](./deck-generator/) | AI-generated slide decks with consistent visual styles in minutes | Image Generator, Google Slides Builder, Style Presets |
 | [**YT Competitive Analysis**](./yt-competitive-analysis/) | Find outlier videos and packaging patterns across any YouTube channels | Outlier Detector, Title Pattern Extractor, Channel Benchmarker |
 | [**X Long-Form + Humanizer**](./x-longform-post/) | Write X articles that sound human — with a 24-pattern AI slop detector | Post Writer, Humanizer Checklist, ASCII Diagram Builder |
+| [**WhatsApp ↔ Claude**](./whatsapp-claude/) | Put Claude on WhatsApp — auto-answer inbound messages with an AI agent | Cloud API Webhook, Twilio Sandbox, Proactive Sender |
 
 ---
 
