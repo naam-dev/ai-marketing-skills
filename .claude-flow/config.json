@@ -1,0 +1,109 @@
+{
+  "$schema": "https://ruvnet.github.io/ruflo/schema/config.json",
+  "version": "1.0.0",
+  "project": {
+    "name": "ai-marketing-skills",
+    "description": "AI Marketing Skills suite orchestrated as a Ruflo meta-harness. Marketing and sales workflows run as coordinated agent swarms with persistent shared memory.",
+    "runtime": "ruflo"
+  },
+
+  "orchestrator": {
+    "defaultTopology": "hierarchical",
+    "maxConcurrentAgents": 8,
+    "defaultCoordinator": "campaign-queen",
+    "consensus": "queen-arbitrated"
+  },
+
+  "topologies": {
+    "hierarchical": {
+      "coordinator": "campaign-queen",
+      "description": "Queen-led campaign orchestration. A strategist decomposes a goal and delegates to specialist workers. Use for end-to-end campaign launches spanning multiple channels.",
+      "workers": [
+        "growth-experimenter",
+        "content-producer",
+        "seo-strategist",
+        "outbound-operator",
+        "pipeline-router",
+        "cro-specialist"
+      ]
+    },
+    "mesh": {
+      "coordinator": "revenue-mesh",
+      "description": "Peer-to-peer revenue intelligence. Agents share findings laterally to converge on pricing, attribution, and forecast decisions. Use for cross-functional revenue analysis where no single owner exists.",
+      "workers": [
+        "revenue-analyst",
+        "finance-analyst",
+        "pricing-strategist",
+        "pipeline-router",
+        "team-auditor"
+      ]
+    },
+    "pipeline": {
+      "coordinator": "content-factory",
+      "description": "Sequential content assembly line. Each stage consumes the previous stage's output. Use for producing and repurposing content at scale.",
+      "stages": [
+        "variant-researcher",
+        "content-producer",
+        "quality-eval",
+        "podcast-repurposer",
+        "x-writer",
+        "yt-analyst",
+        "deck-builder"
+      ]
+    }
+  },
+
+  "agents": {
+    "registry": ".claude/agents/marketing",
+    "coordinators": ".claude/agents/marketing/coordinators",
+    "roster": [
+      { "name": "growth-experimenter",  "skill": "growth-engine",           "topology": ["hierarchical"] },
+      { "name": "pipeline-router",      "skill": "sales-pipeline",          "topology": ["hierarchical", "mesh"] },
+      { "name": "content-producer",     "skill": "content-ops",             "topology": ["hierarchical", "pipeline"] },
+      { "name": "outbound-operator",    "skill": "outbound-engine",         "topology": ["hierarchical"] },
+      { "name": "seo-strategist",       "skill": "seo-ops",                 "topology": ["hierarchical"] },
+      { "name": "finance-analyst",      "skill": "finance-ops",             "topology": ["mesh"] },
+      { "name": "revenue-analyst",      "skill": "revenue-intelligence",    "topology": ["mesh"] },
+      { "name": "cro-specialist",       "skill": "conversion-ops",          "topology": ["hierarchical", "pipeline"] },
+      { "name": "podcast-repurposer",   "skill": "podcast-ops",             "topology": ["pipeline"] },
+      { "name": "team-auditor",         "skill": "team-ops",                "topology": ["mesh"] },
+      { "name": "pricing-strategist",   "skill": "sales-playbook",          "topology": ["mesh"] },
+      { "name": "variant-researcher",   "skill": "autoresearch",            "topology": ["pipeline"] },
+      { "name": "deck-builder",         "skill": "deck-generator",          "topology": ["pipeline"] },
+      { "name": "yt-analyst",           "skill": "yt-competitive-analysis", "topology": ["pipeline"] },
+      { "name": "x-writer",             "skill": "x-longform-post",         "topology": ["pipeline"] },
+      { "name": "quality-eval",         "skill": "eval",                    "topology": ["pipeline"] }
+    ]
+  },
+
+  "memory": {
+    "backend": "agentdb",
+    "persistence": ".swarm/memory.db",
+    "index": "hnsw",
+    "shareAcrossSessions": true,
+    "namespaces": {
+      "marketing/playbook":    "Proven, promoted best practices from won experiments (growth-experimenter writes, all read).",
+      "marketing/icp":         "Ideal customer profile, continuously refined from win/loss data (pipeline-router owns).",
+      "marketing/experiments": "Live experiment state, hypotheses, and data points (growth-experimenter owns).",
+      "marketing/content":     "Editorial brain: voice, scored drafts, quote bank, repurposing assets (content-producer owns).",
+      "marketing/revenue":     "Attribution, pricing patterns, forecast, and call insights (revenue-mesh shared).",
+      "marketing/keywords":    "SEO opportunity map and trend signals (seo-strategist owns)."
+    }
+  },
+
+  "modelRouting": {
+    "enabled": true,
+    "description": "Tiered routing keeps ~75% of turns on cheaper models; escalate only for strategy and scoring.",
+    "tiers": {
+      "coordination": "claude-opus-4-8",
+      "scoring":      "claude-opus-4-8",
+      "execution":    "claude-sonnet-5",
+      "mechanical":   "claude-haiku-4-5-20251001"
+    }
+  },
+
+  "hooks": {
+    "sessionStart": "python3 telemetry/version_check.py 2>/dev/null || true",
+    "preCommit": "python3 security/sanitizer.py --scan --dir . --recursive --quiet"
+  }
+}

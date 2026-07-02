@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "ruflo": {
+      "command": "npx",
+      "args": ["ruflo@latest", "mcp", "start"],
+      "type": "stdio",
+      "description": "Ruflo (Claude Flow) meta-harness — swarm orchestration, agent spawning, and persistent shared memory for the AI Marketing Skills suite."
+    }
+  }
+}

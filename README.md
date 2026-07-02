@@ -28,6 +28,29 @@ These aren't prompts. They're complete workflows — scripts, scoring algorithms
 
 ---
 
+## 🌊 Run as a Swarm (Ruflo Meta-Harness)
+
+These skills also run as **coordinated agent swarms** on [Ruflo](https://github.com/ruvnet/ruflo)
+(Claude Flow). Instead of invoking one skill at a time, a coordinator decomposes your goal and
+delegates to specialist agents that share a persistent memory layer.
+
+| Goal shape | Topology | Command |
+|-----------|----------|---------|
+| Launch a campaign across channels | hierarchical (`campaign-queen`) | `/launch-campaign "..."` |
+| Answer a revenue question | mesh (`revenue-mesh`) | `/revenue-review "..."` |
+| Produce + repurpose content at scale | pipeline (`content-factory`) | `/content-factory "..."` |
+
+```bash
+# Register the Ruflo MCP server (one-time), then open this repo in Claude Code
+claude mcp add ruflo -- npx ruflo@latest mcp start
+```
+
+Each of the 16 skills is exposed as an agent under [`.claude/agents/marketing/`](./.claude/agents/marketing/),
+sharing six memory namespaces (`playbook`, `icp`, `experiments`, `content`, `revenue`, `keywords`).
+Full setup and walkthrough: **[`RUFLO.md`](./RUFLO.md)** · architecture + house rules: **[`CLAUDE.md`](./CLAUDE.md)**.
+
+---
+
 ## 🚀 Quick Start
 
 Each skill category has its own README with setup instructions. The general pattern:
