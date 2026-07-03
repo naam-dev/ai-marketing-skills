@@ -40,8 +40,10 @@ Shopify connector, or run from Claude Code desktop/CLI where approvals render), 
 - Re-run Google **Rich Results Test** on the live homepage — expect `MedicalClinic`/
   `LocalBusiness` + `WebSite` detected with no errors.
 - This is pillar 1 of the plan in `../README.md`. Next up (also doable via MCP): `FAQPage`
-  schema on the FAQs page, `Person` schema on the Shyam Ravrani / Dr. Ravi Ponniah bio pages,
+  schema on the FAQs page, `Person` schema on the practitioner bio pages,
   answer-first rewrites, and fresh service-focused blog posts.
+  (Practitioner names for the `Person` schema are read directly from the live store, so they
+  are not duplicated into this public repo.)
 
 ## To revert (if ever needed)
 Delete `snippets/geo-schema.liquid` and remove the last two lines of
