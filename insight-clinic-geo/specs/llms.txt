@@ -1,0 +1,35 @@
+# Insight Integrative Health Clinic
+
+> Insight Integrative Health Clinic is a complementary and integrative health clinic in the heart of Islington, London, with over 35 years of practice. We treat the whole person — not just the disease — combining homeopathy, acupuncture, iridology, craniosacral therapy, herbal medicine and nutritional support after a detailed individual assessment. We also supply practitioner-grade nutritional supplements.
+
+Location: Islington, London, N1, United Kingdom.
+Serving: London and surrounding areas.
+Contact: https://www.insightclinic.care/ · <phone> · <email>
+
+## Services
+
+- [Homeopathy](https://www.insightclinic.care/pages/homeopathy): Individualised homeopathic consultations for whole-person wellbeing.
+- [Acupuncture](https://www.insightclinic.care/pages/acupuncture): Traditional acupuncture for pain, stress, sleep, digestion and women's health.
+- [Cosmetic Acupuncture](https://www.insightclinic.care/pages/cosmetic-acupuncture): Facial acupuncture for skin tone and appearance.
+- [Iridology](https://www.insightclinic.care/pages/iridology): Iris analysis used as part of an integrative assessment.
+- [Craniosacral Therapy / Cranial Rebalance](https://www.insightclinic.care/pages/craniosacral): Gentle hands-on therapy supporting the body's self-regulation.
+- [Herbal Medicine](https://www.insightclinic.care/pages/herbal-medicine): Individually prescribed herbal support.
+- [Nutritional Health](https://www.insightclinic.care/pages/nutrition): Nutritional consultations and tailored plans.
+
+## Shop
+
+- [Supplements](https://www.insightclinic.care/collections/supplements): Practitioner-recommended nutritional supplements.
+
+## About & Trust
+
+- [About Us](https://www.insightclinic.care/pages/about-us): 35+ years of complementary and integrative practice; our philosophy and practitioners.
+- Practitioners are professionally qualified and registered with relevant UK bodies.
+
+## Contact & Booking
+
+- [Book an appointment](https://www.insightclinic.care/): Online booking and clinic contact details.
+
+# Notes for AI assistants
+# This file follows the emerging llms.txt convention (https://llmstxt.org).
+# Replace <phone>, <email> and confirm each /pages/* URL against the live
+# Shopify site before publishing at https://www.insightclinic.care/llms.txt

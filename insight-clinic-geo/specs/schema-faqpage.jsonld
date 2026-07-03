@@ -1,0 +1,40 @@
+{
+  "_comment": "FAQPage schema — the single highest-impact GEO schema type. Add one block per page that has a visible Q&A section (the answers on the page MUST match these word-for-word). Each Q&A becomes a direct citation candidate in AI answers. Keep answers self-contained, definition-first, 40-80 words. Example below uses acupuncture FAQs — duplicate the pattern per service.",
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "@id": "https://www.insightclinic.care/pages/acupuncture#faq",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How much does acupuncture cost in London at Insight Clinic?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "At Insight Integrative Health Clinic in Islington, acupuncture consultations start from £<XX>, with the first appointment (which includes a full integrative health assessment) from £<XX>. Sessions typically last <45-60> minutes. Concessions may be available — <confirm on the booking page>."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What conditions can acupuncture help with?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Acupuncture is a traditional therapy in which fine needles are inserted at specific points to support the body's own regulation. People commonly seek it for pain, stress and anxiety, sleep, digestive issues, and women's health. Evidence varies by condition — see NICE guidance and the British Acupuncture Council for details. At Insight Clinic, treatment is tailored to a full individual assessment."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Where is Insight Clinic located and how do I book acupuncture?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Insight Integrative Health Clinic is in the heart of Islington, London <N1 XXX>, serving patients across London. You can book acupuncture online at insightclinic.care or by phone on <+44 20 XXXX XXXX>."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are the practitioners at Insight Clinic qualified and registered?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Insight Clinic's practitioners are professionally qualified and registered with the relevant UK bodies — for example the <British Acupuncture Council (BAcC)> for acupuncture and the <Society of Homeopaths> for homeopathy. The clinic has practised complementary and integrative medicine for over 35 years."
+      }
+    }
+  ]
+}

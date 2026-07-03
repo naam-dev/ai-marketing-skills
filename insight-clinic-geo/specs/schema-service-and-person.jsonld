@@ -1,0 +1,74 @@
+{
+  "_comment": "Three reusable templates: (1) Service — one per treatment page; (2) Person — one per practitioner bio (E-E-A-T for YMYL health); (3) Product — supplement pages. Split each into its own <script type=\"application/ld+json\"> block on the relevant page. Replace <PLACEHOLDER> with verified data. Never invent credentials, prices, or ratings.",
+
+  "service_template": {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "@id": "https://www.insightclinic.care/pages/homeopathy#service",
+    "serviceType": "Homeopathy",
+    "name": "Homeopathy Consultation in London",
+    "description": "Homeopathy is a complementary therapy that uses highly diluted natural substances to support the body's own healing response, prescribed individually after a detailed consultation. At Insight Integrative Health Clinic in Islington, homeopathy is delivered as part of a whole-person integrative assessment.",
+    "provider": { "@id": "https://www.insightclinic.care/#clinic" },
+    "areaServed": { "@type": "City", "name": "London" },
+    "audience": { "@type": "MedicalAudience", "audienceType": "Patients seeking complementary and integrative health support" },
+    "offers": {
+      "@type": "Offer",
+      "priceCurrency": "GBP",
+      "price": "<XX.00>",
+      "url": "https://www.insightclinic.care/pages/homeopathy",
+      "availability": "https://schema.org/InStock"
+    }
+  },
+
+  "person_template": {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "@id": "https://www.insightclinic.care/pages/<practitioner-slug>#person",
+    "name": "<Practitioner Full Name>",
+    "jobTitle": "<Homeopath / Acupuncturist>",
+    "worksFor": { "@id": "https://www.insightclinic.care/#clinic" },
+    "description": "<1-2 sentence bio: specialisms, years of experience, approach.>",
+    "image": "https://www.insightclinic.care/<path-to-headshot>.jpg",
+    "url": "https://www.insightclinic.care/pages/<practitioner-slug>",
+    "knowsAbout": ["Homeopathy", "Acupuncture", "Nutritional therapy", "Iridology"],
+    "hasCredential": [
+      {
+        "@type": "EducationalOccupationalCredential",
+        "credentialCategory": "Professional registration",
+        "recognizedBy": { "@type": "Organization", "name": "<e.g. British Acupuncture Council (BAcC)>" },
+        "name": "<e.g. Registered member — MBAcC>"
+      },
+      {
+        "@type": "EducationalOccupationalCredential",
+        "credentialCategory": "Qualification",
+        "name": "<e.g. LCPH — Licentiate, College of Practical Homeopathy>"
+      }
+    ]
+  },
+
+  "product_template": {
+    "_comment": "For supplement pages under /products/*. Shopify themes often output basic Product schema already — extend it with brand, GTIN, and only-real ratings. Do not duplicate an existing Product block; edit the theme's instead.",
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "<Supplement Name>",
+    "brand": { "@type": "Brand", "name": "<Brand>" },
+    "description": "<Product description>",
+    "sku": "<SKU>",
+    "gtin": "<barcode if available>",
+    "image": "https://www.insightclinic.care/<product-image>.jpg",
+    "offers": {
+      "@type": "Offer",
+      "priceCurrency": "GBP",
+      "price": "<XX.XX>",
+      "availability": "https://schema.org/InStock",
+      "url": "https://www.insightclinic.care/products/<handle>",
+      "seller": { "@id": "https://www.insightclinic.care/#clinic" }
+    },
+    "aggregateRating": {
+      "_comment": "Only if you show real reviews for this product.",
+      "@type": "AggregateRating",
+      "ratingValue": "<4.8>",
+      "reviewCount": "<NN>"
+    }
+  }
+}

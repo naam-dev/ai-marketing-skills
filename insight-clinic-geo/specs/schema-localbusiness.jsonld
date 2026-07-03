@@ -1,0 +1,73 @@
+{
+  "_comment": "SITEWIDE schema for insightclinic.care. Place inside <script type=\"application/ld+json\"> in theme.liquid <head>. Replace every <PLACEHOLDER> with verified live data before publishing. MedicalClinic is a subtype of LocalBusiness, so this single block covers both the 'local business' and 'health provider' identity that AI engines look for.",
+  "@context": "https://schema.org",
+  "@type": ["MedicalClinic", "LocalBusiness"],
+  "@id": "https://www.insightclinic.care/#clinic",
+  "name": "Insight Integrative Health Clinic",
+  "alternateName": "Insight Clinic",
+  "url": "https://www.insightclinic.care/",
+  "logo": "https://www.insightclinic.care/<PATH_TO_LOGO>.png",
+  "image": "https://www.insightclinic.care/<PATH_TO_PHOTO>.jpg",
+  "description": "Insight Integrative Health Clinic is a complementary and integrative health clinic in Islington, London, with 35+ years of practice offering homeopathy, acupuncture, cosmetic acupuncture, iridology, craniosacral therapy, herbal medicine and nutritional consultations.",
+  "foundingDate": "<YYYY>",
+  "telephone": "<+44 20 XXXX XXXX>",
+  "email": "<hello@insightclinic.care>",
+  "priceRange": "££",
+  "currenciesAccepted": "GBP",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "<STREET ADDRESS>",
+    "addressLocality": "Islington",
+    "addressRegion": "London",
+    "postalCode": "<N1 XXX>",
+    "addressCountry": "GB"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": "<51.5xxxx>",
+    "longitude": "<-0.1xxxx>"
+  },
+  "hasMap": "<GOOGLE_MAPS_URL>",
+  "areaServed": [
+    { "@type": "City", "name": "London" },
+    { "@type": "AdministrativeArea", "name": "Islington" }
+  ],
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      "opens": "<09:00>",
+      "closes": "<18:00>"
+    },
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": "Saturday",
+      "opens": "<10:00>",
+      "closes": "<14:00>"
+    }
+  ],
+  "medicalSpecialty": ["PublicHealth"],
+  "availableService": [
+    { "@type": "MedicalTherapy", "name": "Homeopathy" },
+    { "@type": "MedicalTherapy", "name": "Acupuncture" },
+    { "@type": "MedicalTherapy", "name": "Cosmetic Acupuncture" },
+    { "@type": "MedicalTherapy", "name": "Iridology" },
+    { "@type": "MedicalTherapy", "name": "Craniosacral Therapy" },
+    { "@type": "MedicalTherapy", "name": "Herbal Medicine" },
+    { "@type": "MedicalTherapy", "name": "Nutritional Therapy" }
+  ],
+  "sameAs": [
+    "<https://www.google.com/maps/place/... (Google Business Profile)>",
+    "<https://www.facebook.com/...>",
+    "<https://www.instagram.com/...>",
+    "<https://www.linkedin.com/company/...>",
+    "<https://uk.trustpilot.com/review/...>",
+    "<https://www.wikidata.org/wiki/... (once created)>"
+  ],
+  "aggregateRating": {
+    "_comment": "Only include if you display real, verifiable reviews on-site. Never fabricate ratings — it breaches schema.org guidelines and AI trust signals.",
+    "@type": "AggregateRating",
+    "ratingValue": "<4.9>",
+    "reviewCount": "<NN>"
+  }
+}
