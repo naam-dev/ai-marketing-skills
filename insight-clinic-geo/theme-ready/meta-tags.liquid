@@ -120,5 +120,8 @@
   >
 {% endif %}
 
-{%- comment -%} GEO/AI-search: sitewide structured data (MedicalClinic + WebSite). Safe to remove. {%- endcomment -%}
+{%- comment -%} GEO/AI-search: sitewide structured data (MedicalClinic + WebSite). {%- endcomment -%}
 {% render 'geo-schema' %}
+{%- if page.handle == 'faqs' -%}
+  {% render 'geo-faq' %}
+{%- endif -%}

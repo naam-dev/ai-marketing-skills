@@ -1,50 +1,43 @@
-# Apply the sitewide schema (2 minutes)
+# Apply the schema (status + finish steps)
 
-These are the **exact, final files** to add sitewide `MedicalClinic + WebSite` JSON-LD to
-insightclinic.care, built from the store's real, verified data (NAP, geo, services). Adding
-them is how the site starts being understood and cited by ChatGPT, Perplexity, Gemini,
-Google AI Overviews and Claude.
+Sitewide `MedicalClinic + WebSite` schema **and** a `FAQPage` (mirroring the live FAQ) for
+insightclinic.care, built from the store's real, verified data (address, phone, geo, since
+1984, practitioners Dr Ravi Ponniah & Dr Shyam Ravrani incl. BAcC, real fees, Instagram).
 
-I already **duplicated your live theme** to a safe copy named
-**"Insight — GEO/AI-search optimized (review & publish)"** (theme id `178441126264`). The
-only step left is writing these two files into that copy, previewing, and publishing.
+A safe **copy of the live theme** already exists in the store:
+**"Insight — GEO/AI-search optimized (review & publish)"** (theme id `178441126264`).
 
-## What each file is
-- **`geo-schema.liquid`** → a NEW snippet: `snippets/geo-schema.liquid`. Contains the
-  JSON-LD. Purely additive.
-- **`meta-tags.liquid`** → REPLACES `snippets/meta-tags.liquid`. It is byte-for-byte your
-  current file (verified: original was 2535 bytes) **plus one line at the end** that renders
-  the schema on every page:
-  `{% render 'geo-schema' %}`.
+## Current state in that theme copy (via Shopify MCP)
+- ✅ `snippets/geo-schema.liquid` — written & verified (enriched MedicalClinic + WebSite).
+- ✅ `snippets/meta-tags.liquid` — written & verified. Renders `geo-schema` sitewide and
+  `geo-faq` **only on the FAQs page**.
+- ⚠️ `snippets/geo-faq.liquid` — **NOT yet written** (connector kept dropping the approval).
+  Because `meta-tags.liquid` already references it, the FAQs page will show a
+  "snippet not found" error **until this file is added**. So this file must be added before
+  previewing/publishing — it's `geo-faq.liquid` in this folder.
 
-## Option A — I finish it via Shopify MCP (preferred)
-The connector kept dropping the write-approval this session. Once it's stable (re-add the
-Shopify connector, or run from Claude Code desktop/CLI where approvals render), just say
-**"apply the schema"** — the theme copy and files are ready; it's one `themeFilesUpsert` call.
+## Finish — Option A (via MCP, preferred)
+When the Shopify connector is stable, say **"apply the FAQ schema"** — it's a single
+`themeFilesUpsert` of `snippets/geo-faq.liquid` into theme `178441126264`.
 
-## Option B — you paste it in Shopify admin (works right now)
-1. Shopify admin → **Online Store → Themes**.
-2. Find **"Insight — GEO/AI-search optimized (review & publish)"** → **⋯ → Edit code**.
-3. Under **Snippets**, click **Add a new snippet**, name it `geo-schema`, and paste the
-   contents of `geo-schema.liquid`. Save.
-4. Open **`snippets/meta-tags.liquid`**, select all, and replace with the contents of the
-   `meta-tags.liquid` in this folder. Save. *(The only change vs. your current file is the
-   two comment/render lines at the very bottom.)*
-5. Back on the Themes page, use **Preview** on that theme to check the site looks identical.
-6. **Validate:** open the preview, view page source, confirm a
-   `<script type="application/ld+json">` block with `"MedicalClinic"` is present. Optionally
-   paste the preview URL into Google's **Rich Results Test**.
-7. When happy, click **Publish** on that theme.
+## Finish — Option B (Shopify admin, works now)
+Online Store → Themes → **"Insight — GEO/AI-search optimized"** → ⋯ **Edit code**:
+1. Snippets → **Add a new snippet** → name it `geo-faq` → paste `geo-faq.liquid` from this
+   folder → Save. *(This is the only missing piece; the other two are already in the theme.)*
+2. (If you ever need to re-check the other two, `geo-schema.liquid` and `meta-tags.liquid`
+   here are the exact copies that were written.)
+3. **Preview** the theme → confirm the site + FAQs page look right.
+4. **Validate:** Google **Rich Results Test** on the preview → expect `MedicalClinic` +
+   `WebSite` sitewide, and `FAQPage` on `/pages/faqs`.
+5. **Publish** the theme.
 
-## After publishing
-- Re-run Google **Rich Results Test** on the live homepage — expect `MedicalClinic`/
-  `LocalBusiness` + `WebSite` detected with no errors.
-- This is pillar 1 of the plan in `../README.md`. Next up (also doable via MCP): `FAQPage`
-  schema on the FAQs page, `Person` schema on the practitioner bio pages,
-  answer-first rewrites, and fresh service-focused blog posts.
-  (Practitioner names for the `Person` schema are read directly from the live store, so they
-  are not duplicated into this public repo.)
+## Revert
+Delete `snippets/geo-schema.liquid` + `snippets/geo-faq.liquid`, and remove the render lines
+at the end of `snippets/meta-tags.liquid`. No other file is touched.
 
-## To revert (if ever needed)
-Delete `snippets/geo-schema.liquid` and remove the last two lines of
-`snippets/meta-tags.liquid`. No other file is touched.
+## Notes
+- The `FAQPage` mirrors 27 of the ~60 live FAQ answers (top ~3 per section) — enough to be
+  strong without bloat. All answers are copied from the live page, so schema and visible
+  content agree (Google requirement).
+- Health claims stay measured/sourced (e.g. NICE for acupuncture) per ASA/MHRA — matching
+  the clinic's own FAQ wording.
