@@ -1,0 +1,59 @@
+{% comment %}
+  GEO / AI-search structured data for Insight Integrative Health Clinic.
+  Added for Generative Engine Optimization (helps ChatGPT, Perplexity, Gemini,
+  Google AI Overviews and Claude understand and cite the clinic).
+  Purely additive and safe to remove: delete this file and the single
+  render line appended to the end of snippets/meta-tags.liquid.
+{% endcomment %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": ["MedicalClinic", "LocalBusiness"],
+      "@id": "https://www.insightclinic.care/#clinic",
+      "name": "Insight Integrative Health Clinic",
+      "alternateName": "Insight Clinic",
+      "url": "https://www.insightclinic.care/",
+      "description": "Insight Integrative Health Clinic is a complementary and integrative health clinic in Islington, London, with over 35 years of practice. We offer homeopathy, acupuncture, craniosacral therapy, iridology (ophthalmic somatology) and nutritional consultations, treating the whole person as part of an individual integrative assessment.",
+      "telephone": "+44 20 7278 1212",
+      "email": "info@insightclinic.care",
+      "priceRange": "££",
+      "currenciesAccepted": "GBP",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "24 Chapel Market, Islington",
+        "addressLocality": "London",
+        "addressRegion": "England",
+        "postalCode": "N1 9EZ",
+        "addressCountry": "GB"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 51.5336469,
+        "longitude": -0.109066
+      },
+      "hasMap": "https://www.google.com/maps/search/?api=1&query=51.5336469%2C-0.109066",
+      "areaServed": [
+        { "@type": "City", "name": "London" },
+        { "@type": "AdministrativeArea", "name": "Islington" }
+      ],
+      "medicalSpecialty": "PublicHealth",
+      "availableService": [
+        { "@type": "MedicalTherapy", "name": "Homeopathy" },
+        { "@type": "MedicalTherapy", "name": "Acupuncture" },
+        { "@type": "MedicalTherapy", "name": "Craniosacral Therapy" },
+        { "@type": "MedicalTherapy", "name": "Iridology (Ophthalmic Somatology)" },
+        { "@type": "MedicalTherapy", "name": "Nutritional Therapy" }
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://www.insightclinic.care/#website",
+      "url": "https://www.insightclinic.care/",
+      "name": "Insight Integrative Health Clinic",
+      "publisher": { "@id": "https://www.insightclinic.care/#clinic" }
+    }
+  ]
+}
+</script>
