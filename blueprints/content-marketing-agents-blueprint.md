@@ -270,7 +270,7 @@ You are the Chief of Staff. Run the content pipeline (§5) manually via the `con
 Stand up the weekly Insight Brief (§4) using `seo-ops` + `yt-competitive-analysis` + Quote Miner. The Content Agent now only works from briefs.
 *Exit criteria: 2 consecutive weekly briefs; 100% of new content traceable to a brief.*
 
-**Phase 3 (Weeks 5–6): Marketing Agent closes the loop.**
+**Phase 3 (Weeks 5–6): Marketing Agent closes the loop.** → **[Phase 3 Runbook](./phase-3-marketing-agent-runbook.md)**
 Wrap distribution in `growth-engine` experiments with pre-committed kill thresholds. Winner/loser patterns start flowing back into memory, and you should see Content Agent output improve without prompt changes — that's the flywheel catching.
 *Exit criteria: 4 experiments completed with statistical readouts; ≥1 winner scaled; kill log non-empty.*
 
