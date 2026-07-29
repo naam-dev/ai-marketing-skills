@@ -266,7 +266,7 @@ The video's honest kicker applies: you won't deploy the mega-system on day one �
 You are the Chief of Staff. Run the content pipeline (§5) manually via the `content-ops` skills: brief → draft → expert panel → quality gate → humanize → publish. Create `memory/` and start logging scores and outcomes from day one — memory is cheap to write and expensive to backfill.
 *Exit criteria: 10 pieces published at 90+, revision loop working, memory files populated.*
 
-**Phase 2 (Weeks 3–4): Insight Agent feeds it.**
+**Phase 2 (Weeks 3–4): Insight Agent feeds it.** → **[Phase 2 Runbook](./phase-2-insight-agent-runbook.md)**
 Stand up the weekly Insight Brief (§4) using `seo-ops` + `yt-competitive-analysis` + Quote Miner. The Content Agent now only works from briefs.
 *Exit criteria: 2 consecutive weekly briefs; 100% of new content traceable to a brief.*
 
