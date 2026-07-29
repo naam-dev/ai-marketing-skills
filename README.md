@@ -70,6 +70,17 @@ Then ask Claude Code: *"Run an experiment testing carousel vs. static posts on L
 
 ---
 
+## 🔌 Bundled Top Skills & MCP Servers
+
+This repo also ships with a curated install of the top Claude Code skills and MCP servers of 2026, pre-wired for marketing work:
+
+- **`.claude/skills/`** — `frontend-design`, `theme-factory`, and `skill-creator`, vendored from [anthropics/skills](https://github.com/anthropics/skills) (Apache-2.0). Auto-discovered by Claude Code when you open this repo.
+- **`.mcp.json`** — project-scoped MCP servers: Playwright (CRO audits, screenshots), Firecrawl (competitive scraping), DataForSEO (keyword/SERP data), Context7, GitHub, Notion, and Fetch. API keys load from environment variables — no secrets in the repo.
+
+See [docs/TOP-SKILLS-AND-MCP.md](./docs/TOP-SKILLS-AND-MCP.md) for the research behind the picks, setup notes, and what was deliberately left out.
+
+---
+
 ## 📊 What Makes These Different
 
 **These aren't toy demos.** Each skill was built to run real business operations:
