@@ -262,7 +262,7 @@ memory/
 
 The video's honest kicker applies: you won't deploy the mega-system on day one — **you'll deploy one agent.** Each phase must pay for itself before the next begins.
 
-**Phase 1 (Weeks 1–2): Content Agent, human-orchestrated.**
+**Phase 1 (Weeks 1–2): Content Agent, human-orchestrated.** → **[Phase 1 Runbook](./phase-1-content-agent-runbook.md)** · scaffolded [`memory/`](../memory/)
 You are the Chief of Staff. Run the content pipeline (§5) manually via the `content-ops` skills: brief → draft → expert panel → quality gate → humanize → publish. Create `memory/` and start logging scores and outcomes from day one — memory is cheap to write and expensive to backfill.
 *Exit criteria: 10 pieces published at 90+, revision loop working, memory files populated.*
 

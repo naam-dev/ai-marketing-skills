@@ -1,0 +1,13 @@
+# Voice-of-Customer quote bank.
+# Owner: Human (Phase 1 — paste quotes from sales calls, support tickets, community posts)
+#        → content-ops Quote Miner (Phase 2+).
+# Rule from the blueprint (§5): every content piece must use ≥2 verbatim quotes from this bank.
+# Keep quotes VERBATIM — the typos and phrasing are the value.
+
+quotes:
+  # - quote: ""              # verbatim, in their words
+  #   source: ""             # e.g. "sales call 2026-07-14", "G2 review", "Slack community"
+  #   segment: ""            # which ICP segment said it
+  #   theme: ""              # pain | objection | desired-outcome | buying-trigger | praise
+  #   used_in: []            # content-log ids that used this quote (Content Agent appends)
+  []
