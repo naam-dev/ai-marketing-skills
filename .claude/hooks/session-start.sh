@@ -1,14 +1,12 @@
 #!/bin/bash
-# Installs the addy-agent-skills plugin so its skills are available in
-# Claude Code on the web sessions, which start from a fresh container each
-# time and do not carry a per-machine plugin install.
+# Installs the addy-agent-skills plugin so its skills are available in any
+# session working in this repo.
 #
-# Local machines (Mac, servers) install the plugin once into ~/.claude and
-# keep it, so this is a no-op there.
+# Runs on every machine, not just remote ones: containers that are recreated
+# per session (Claude Code on the web, throwaway Docker hosts) carry no
+# per-machine plugin install and need this every time. On a persistent
+# machine the install survives, so this exits early after the first run.
 set -euo pipefail
-
-# Remote sessions only.
-[ "${CLAUDE_CODE_REMOTE:-}" = "true" ] || exit 0
 
 command -v claude >/dev/null 2>&1 || exit 0
 
@@ -24,7 +22,8 @@ fi
 # keeps the hook self-sufficient if that entry is ever removed.
 claude plugin marketplace add addyosmani/agent-skills >/dev/null 2>&1 || true
 
-if claude plugin install "$PLUGIN" >/dev/null 2>&1; then
+# -y: the confirmation prompt requires it when stdin/stdout is not a TTY.
+if claude plugin install -y "$PLUGIN" >/dev/null 2>&1; then
   echo "session-start: installed $PLUGIN"
 else
   # Never block the session on a plugin that failed to fetch.
