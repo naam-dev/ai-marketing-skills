@@ -1,0 +1,30 @@
+{
+  "name": "ai-marketing-skills",
+  "owner": {
+    "name": "Single Brain",
+    "url": "https://singlebrain.com"
+  },
+  "metadata": {
+    "description": "Open-source Claude Code skills for marketing and sales teams — content, SEO, outbound, sales, finance, and revenue ops. Battle-tested by Single Brain.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "ai-marketing-skills",
+      "source": "./",
+      "description": "Complete marketing and sales workflows for Claude Code: growth experiments, sales pipeline, content ops, outbound, SEO, finance, revenue intelligence, conversion, podcast, team ops, sales playbook, autoresearch, deck generation, YouTube competitive analysis, and X long-form writing.",
+      "category": "Marketing & Sales",
+      "version": "1.0.0",
+      "keywords": [
+        "marketing",
+        "sales",
+        "seo",
+        "outbound",
+        "content",
+        "growth",
+        "revenue",
+        "conversion"
+      ]
+    }
+  ]
+}

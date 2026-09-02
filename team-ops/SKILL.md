@@ -1,3 +1,14 @@
+---
+name: team-ops
+description: >-
+  AI team performance + meeting intelligence — ruthless performance audits using
+  the "Elon Algorithm", stack ranking, org bottleneck/automation analysis, and
+  extraction of action items and decisions from meeting transcripts. Use when asked
+  to: "audit team performance", "stack rank the team", "find redundant roles",
+  "extract action items from this meeting", "process meeting notes", or "push
+  action items to HubSpot".
+---
+
 # AI Team Ops
 
 ## Preamble (runs on skill start)

@@ -1,3 +1,14 @@
+---
+name: revenue-intelligence
+description: >-
+  AI revenue intelligence — extract insights from Gong sales-call transcripts,
+  content-to-revenue attribution (first-touch + multi-touch), and unified client
+  reports from GA4 + HubSpot + Ahrefs + Gong. Use when asked to: "analyze this
+  sales call", "find objections/buying signals in transcripts", "prove content
+  ROI", "revenue attribution", "generate a client report", or "content gap
+  analysis".
+---
+
 # AI Revenue Intelligence
 
 ## Preamble (runs on skill start)

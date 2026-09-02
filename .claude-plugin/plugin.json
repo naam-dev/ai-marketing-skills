@@ -1,0 +1,41 @@
+{
+  "name": "ai-marketing-skills",
+  "version": "1.0.0",
+  "description": "Open-source Claude Code skills for marketing and sales teams — content, SEO, outbound, sales, finance, and revenue ops. Battle-tested by Single Brain.",
+  "license": "MIT",
+  "repository": "https://github.com/naam-dev/ai-marketing-skills",
+  "homepage": "https://github.com/naam-dev/ai-marketing-skills",
+  "keywords": [
+    "marketing",
+    "sales",
+    "seo",
+    "outbound",
+    "content",
+    "growth",
+    "revenue",
+    "conversion",
+    "finance",
+    "podcast"
+  ],
+  "author": {
+    "name": "Single Brain",
+    "url": "https://singlebrain.com"
+  },
+  "skills": [
+    "./autoresearch/",
+    "./content-ops/",
+    "./conversion-ops/",
+    "./deck-generator/",
+    "./finance-ops/",
+    "./growth-engine/",
+    "./outbound-engine/",
+    "./podcast-ops/",
+    "./revenue-intelligence/",
+    "./sales-pipeline/",
+    "./sales-playbook/",
+    "./seo-ops/",
+    "./team-ops/",
+    "./x-longform-post/",
+    "./yt-competitive-analysis/"
+  ]
+}

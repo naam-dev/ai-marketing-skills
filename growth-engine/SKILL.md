@@ -1,3 +1,14 @@
+---
+name: growth-engine
+description: >-
+  Autonomous growth experimentation — create A/B and multivariate experiments
+  with hypotheses, log data points, run statistical analysis (bootstrap CI +
+  Mann-Whitney U), auto-promote winners to a living playbook, and generate weekly
+  scorecards. Use when asked to: "run an experiment", "create an A/B test", "log
+  experiment results", "score this experiment", "check the playbook", "weekly
+  scorecard", or "campaign pacing".
+---
+
 # Growth Engine
 
 ## Preamble (runs on skill start)

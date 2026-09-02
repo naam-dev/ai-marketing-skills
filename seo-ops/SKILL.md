@@ -1,3 +1,13 @@
+---
+name: seo-ops
+description: >-
+  AI SEO operations — keyword intelligence, competitor gap analysis, Google Search
+  Console quick-win optimization, and trend detection. Use when asked to: "keyword
+  research", "content brief", "SEO analysis", "find quick-win keywords from GSC",
+  "competitor gap analysis", "trending topics", or "find decaying content / traffic
+  drops".
+---
+
 # AI SEO Ops
 
 ## Preamble (runs on skill start)

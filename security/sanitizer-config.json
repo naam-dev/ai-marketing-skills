@@ -10,6 +10,7 @@
     ".git",
     "__pycache__",
     ".env.example",
+    ".claude",
     "security/README.md",
     "security/sanitizer-config.json"
   ],
