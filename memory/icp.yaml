@@ -1,0 +1,29 @@
+# Ideal Customer Profile — single source of truth for all agents.
+# Owner: Human (Phase 1) → sales-pipeline ICP Learner proposes updates (Phase 2+, human-gated).
+# Every content piece and campaign must name which segment it targets.
+
+version: 1
+updated: ""          # YYYY-MM-DD — bump on every change
+updated_by: human    # human | icp-learner (human-approved)
+
+segments:
+  - name: ""                      # e.g. "Series A-B SaaS founders"
+    priority: 1                   # 1 = primary
+    firmographics:
+      industry: ""
+      company_size: ""
+      geography: ""
+    role:
+      titles: []                  # e.g. ["Founder", "CEO", "VP Marketing"]
+      seniority: ""
+    pains: []                     # top 3, in their words where possible
+    trigger_events: []            # what makes them buy NOW (funding, new hire, launch)
+    watering_holes: []            # channels/communities where they actually are
+    disqualifiers: []             # who looks like ICP but isn't
+
+evidence:
+  # Why we believe this ICP. From Phase 2 on, the ICP Learner appends
+  # win/loss evidence here; edits above require human approval.
+  - date: ""
+    source: ""                    # e.g. "closed-won review Q2", "founder intuition"
+    finding: ""

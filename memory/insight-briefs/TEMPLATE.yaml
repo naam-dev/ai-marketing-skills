@@ -1,0 +1,21 @@
+# Weekly Insight Brief — output contract from blueprint §4.
+# Owner: Insight Agent (Phase 2+). This directory stays empty in Phase 1 except this template.
+# Name files: YYYY-Wnn.yaml (e.g. 2026-W31.yaml)
+
+week: ""                     # e.g. 2026-W31
+icp_updates: []              # proposed changes to memory/icp.yaml, with evidence (human-gated)
+
+top_opportunities:           # ranked, max 10
+  - topic: ""
+    format_recommendation: ""    # from outlier analysis (yt-competitive-analysis)
+    evidence: ""                 # search volume / competitor gap / VoC signal (seo-ops)
+    intent_level: high           # high | mid | low
+    est_difficulty: 3            # 1-5
+
+voc_language:                # verbatim phrases mined this week → also merged into voc-quotes.yaml
+  - quote: ""
+    source: ""
+
+performance_learnings:       # from attribution (revenue-intelligence) + content-log.jsonl
+  - finding: ""
+    action: ""               # what Content/Marketing should change this week
