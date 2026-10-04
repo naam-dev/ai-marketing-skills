@@ -1,0 +1,2 @@
+# cron (server time)	task
+0 8 * * 1	Weekly team check: read every desk's notes, the board and last week's logs; propose any new hire, playbook or fence change as a review card.

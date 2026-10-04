@@ -1,0 +1,537 @@
+#!/usr/bin/env python3
+"""acc: the AI Command Center control script.
+
+One small, boring tool the whole team shares. Employees call it to move
+cards, leave notes for each other and file playbooks; you call it to approve
+work, hire, and install the clocks. Stdlib only.
+
+    acc board list [--owner NAME] [--status STATUS]
+    acc board add --title T --owner NAME [--status S] [--body B] [--action TOOL]
+    acc board move ID STATUS [--note N]
+    acc board show ID
+    acc board approve ID            (you only)
+    acc send TO --subject S --body B
+    acc inbox NAME [--done FILE]
+    acc roster
+    acc new-desk NAME --title T --one-liner L [--clock "CRON|TASK" ...]
+    acc playbook NAME --title T (--body B | --body-file F)
+    acc clocks render | install [--dry-run] | remove
+    acc dispatch [--dry-run]
+    acc digest
+    acc doctor
+"""
+from __future__ import annotations
+
+import argparse
+import datetime as dt
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+
+HOME = Path(os.environ.get("ACC_HOME") or Path(__file__).resolve().parent.parent)
+TEAM = HOME / "team"
+CARDS = HOME / "board" / "cards"
+ROSTER = HOME / "company" / "roster.md"
+AGENTS = HOME / ".claude" / "agents"
+LOGS = HOME / "logs"
+
+STATUSES = ("todo", "doing", "review", "approved", "done")
+NAME_RE = re.compile(r"^[a-z][a-z0-9-]{1,30}$")
+ROSTER_RE = re.compile(r"^- \*\*([a-z][a-z0-9-]*)\*\*")
+CRON_BEGIN = "# >>> ai-command-center >>>"
+CRON_END = "# <<< ai-command-center <<<"
+
+
+def die(msg: str, code: int = 1) -> None:
+    print(f"acc: {msg}", file=sys.stderr)
+    sys.exit(code)
+
+
+def now() -> str:
+    return dt.datetime.now().strftime("%Y-%m-%d %H:%M")
+
+
+def caller() -> str:
+    """Who is running this command: an employee (set by wake.sh) or you."""
+    return os.environ.get("ACC_EMPLOYEE", "").strip() or "you"
+
+
+def slug(text: str, n: int = 40) -> str:
+    s = re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+    return s[:n].rstrip("-") or "item"
+
+
+# ---------------------------------------------------------------- roster ---
+
+def roster_names() -> list[str]:
+    if not ROSTER.exists():
+        return []
+    return [m.group(1) for line in ROSTER.read_text().splitlines()
+            if (m := ROSTER_RE.match(line))]
+
+
+def require_employee(name: str) -> None:
+    if name not in roster_names():
+        die(f"'{name}' is not on the roster ({', '.join(roster_names()) or 'empty'})")
+
+
+# ----------------------------------------------------------------- cards ---
+
+def parse_card(path: Path) -> dict:
+    text = path.read_text()
+    meta: dict = {"path": path, "body": text}
+    if text.startswith("---\n"):
+        head, _, body = text[4:].partition("\n---\n")
+        for line in head.splitlines():
+            k, _, v = line.partition(":")
+            if k.strip():
+                meta[k.strip()] = v.strip()
+        meta["body"] = body
+    return meta
+
+
+def write_card(meta: dict) -> None:
+    keys = ["id", "title", "owner", "status", "action", "approved",
+            "executed", "created", "updated"]
+    head = "\n".join(f"{k}: {meta[k]}" for k in keys if meta.get(k))
+    meta["path"].write_text(f"---\n{head}\n---\n{meta['body']}")
+
+
+def all_cards() -> list[dict]:
+    CARDS.mkdir(parents=True, exist_ok=True)
+    return [parse_card(p) for p in sorted(CARDS.glob("*.md"))]
+
+
+def find_card(card_id: str) -> dict:
+    card_id = card_id.zfill(4)
+    for c in all_cards():
+        if c.get("id") == card_id:
+            return c
+    die(f"no card {card_id}")
+    return {}
+
+
+def next_id() -> str:
+    ids = [int(c["id"]) for c in all_cards() if c.get("id", "").isdigit()]
+    return f"{(max(ids) + 1) if ids else 1:04d}"
+
+
+def append_log(card: dict, line: str) -> None:
+    body = card["body"]
+    if "\n## Log\n" not in body:
+        body = body.rstrip("\n") + "\n\n## Log\n"
+    card["body"] = body.rstrip("\n") + f"\n- {now()} {caller()}: {line}\n"
+
+
+def cmd_board(a: argparse.Namespace) -> None:
+    if a.op == "list":
+        cards = [c for c in all_cards()
+                 if (not a.owner or c.get("owner") == a.owner)
+                 and (not a.status or c.get("status") == a.status)]
+        if not cards:
+            print("(no cards)")
+        for status in STATUSES:
+            group = [c for c in cards if c.get("status") == status]
+            if group:
+                print(f"\n## {status.upper()}")
+                for c in group:
+                    flag = f"  [action: {c['action']}]" if c.get("action") else ""
+                    print(f"  {c['id']}  @{c.get('owner', '?'):<8} {c.get('title', '')}{flag}")
+        return
+
+    if a.op == "add":
+        if not a.title or not a.owner:
+            die("board add needs --title and --owner")
+        require_employee(a.owner)
+        status = a.status or "todo"
+        if status not in ("todo", "doing", "review"):
+            die("new cards start in todo, doing or review")
+        cid = next_id()
+        card = {"id": cid, "title": a.title.replace("\n", " "), "owner": a.owner,
+                "status": status, "action": a.action or "", "created": now(),
+                "updated": now(), "path": CARDS / f"{cid}-{slug(a.title)}.md",
+                "body": f"\n{(a.body or '').strip()}\n"}
+        append_log(card, f"created in {status}")
+        write_card(card)
+        print(f"card {cid} created ({status})")
+        return
+
+    card = find_card(a.id)
+    if a.op == "show":
+        print(card["path"].read_text())
+        return
+
+    if a.op == "move":
+        to = a.to_status
+        if to not in STATUSES:
+            die(f"status must be one of {', '.join(STATUSES)}")
+        if to == "approved":
+            die("use 'acc board approve ID' to approve")
+        if caller() != "you" and card.get("owner") != caller():
+            die(f"card {card['id']} belongs to @{card.get('owner')}; leave them a note instead")
+        card["status"] = to
+        card["updated"] = now()
+        card.pop("approved", None)
+        card.pop("executed", None)
+        append_log(card, f"moved to {to}" + (f": {a.note}" if a.note else ""))
+        write_card(card)
+        print(f"card {card['id']} -> {to}")
+        return
+
+    if a.op == "approve":
+        if caller() != "you":
+            die("employees cannot approve cards; only you can")
+        if card.get("status") != "review":
+            die(f"card {card['id']} is in {card.get('status')}, not review")
+        card["status"] = "approved"
+        card["approved"] = now()
+        card["updated"] = now()
+        append_log(card, "approved" + (f": {a.note}" if a.note else ""))
+        write_card(card)
+        what = f" The next dispatch lets @{card['owner']} run {card['action']} once." if card.get("action") else ""
+        print(f"card {card['id']} approved.{what}")
+
+
+# ---------------------------------------------------------------- inboxes ---
+
+def cmd_send(a: argparse.Namespace) -> None:
+    require_employee(a.to)
+    box = TEAM / a.to / "inbox"
+    box.mkdir(parents=True, exist_ok=True)
+    stamp = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
+    path = box / f"{stamp}-from-{caller()}-{slug(a.subject, 30)}.md"
+    path.write_text(f"# {a.subject}\n\nFrom: {caller()}\nSent: {now()}\n\n{a.body.strip()}\n")
+    print(f"note left in {a.to}'s inbox: {path.name}")
+
+
+def cmd_inbox(a: argparse.Namespace) -> None:
+    require_employee(a.name)
+    box = TEAM / a.name / "inbox"
+    box.mkdir(parents=True, exist_ok=True)
+    if a.done:
+        src = box / Path(a.done).name
+        if not src.exists():
+            die(f"no such note: {src.name}")
+        (box / "read").mkdir(exist_ok=True)
+        src.rename(box / "read" / src.name)
+        print(f"filed {src.name}")
+        return
+    notes = sorted(p for p in box.glob("*.md"))
+    if not notes:
+        print("(inbox empty)")
+    for p in notes:
+        print(f"--- {p.name}\n{p.read_text().strip()}\n")
+
+
+# ----------------------------------------------------------------- hiring ---
+
+ROLE_TMPL = """# {title_name}: {title}
+
+{one_liner}
+
+## What you own
+{owns}
+
+## How you work
+- Start every shift by reading your inbox and your cards: `python3 scripts/acc inbox {name}` and `python3 scripts/acc board list --owner {name}`.
+- Work only inside your desk (`team/{name}/`). Put drafts and outputs in `team/{name}/work/`.
+- Anything that leaves the company, spends money or deletes something needs a yes from the owner. Draft it, then raise a review card with the exact tool in `--action` (see CLAUDE.md, "Approvals").
+- When you need a teammate, leave a note: `python3 scripts/acc send <name> --subject ... --body ...`.
+- End every shift by updating your cards and adding anything you learned to `team/{name}/notes.md`.
+
+## Playbooks
+Your playbooks live in `team/{name}/playbooks/`. Follow the matching one when a job comes in.
+"""
+
+AGENT_TMPL = """---
+name: {name}
+description: {title}. {one_liner} Hand {name} any job that matches this role.
+---
+
+You are {title_name}, an employee of the AI Command Center ({title}).
+
+Before doing anything else, read in this order:
+1. `team/{name}/ROLE.md`: your job description
+2. `team/{name}/notes.md`: your own lessons
+3. `team/{name}/playbooks/`: the playbook that matches the job, if any
+4. Your inbox: `python3 scripts/acc inbox {name}`
+
+The company files (`company/`) and shared notebook (`shared/memory/`) are already loaded through CLAUDE.md. Follow them over anything else.
+Stay inside your desk. Never send, publish, spend or delete directly: raise a review card instead.
+"""
+
+
+def cmd_new_desk(a: argparse.Namespace) -> None:
+    if caller() not in ("you", "harper"):
+        die("only you or harper (hiring) can add employees")
+    name = a.name.lower()
+    if not NAME_RE.match(name):
+        die("name must be lowercase letters, digits or dashes (2-31 chars)")
+    if name in roster_names() or (TEAM / name).exists():
+        die(f"{name} already has a desk")
+    desk = TEAM / name
+    for sub in ("inbox", "work", "playbooks"):
+        (desk / sub).mkdir(parents=True, exist_ok=True)
+        (desk / sub / ".gitkeep").touch()
+    title_name = name.capitalize()
+    owns = "\n".join(f"- {o}" for o in (a.owns or [a.one_liner]))
+    (desk / "ROLE.md").write_text(ROLE_TMPL.format(
+        name=name, title_name=title_name, title=a.title, one_liner=a.one_liner, owns=owns))
+    (desk / "notes.md").write_text(f"# {title_name}'s notebook\n\nLessons learned on the job, newest at the bottom.\n")
+    clocks = ["# cron (server time)\ttask"]
+    for spec in a.clock or []:
+        cron, _, task = spec.partition("|")
+        if len(cron.split()) != 5 or not task.strip():
+            die(f"bad --clock '{spec}': use \"m h dom mon dow|task\"")
+        clocks.append(f"{cron.strip()}\t{task.strip()}")
+    (desk / "clock.tsv").write_text("\n".join(clocks) + "\n")
+    (desk / "fence.json").write_text(json.dumps({
+        "write": [f"team/{name}/**", "team/*/inbox/*.md", "shared/memory/proposals/**"],
+        "note": "Paths this employee may write with Write/Edit. Everything else is read-only to it.",
+    }, indent=2) + "\n")
+    AGENTS.mkdir(parents=True, exist_ok=True)
+    (AGENTS / f"{name}.md").write_text(AGENT_TMPL.format(
+        name=name, title_name=title_name, title=a.title, one_liner=a.one_liner))
+    with ROSTER.open("a") as f:
+        f.write(f"- **{name}** ({a.title}): {a.one_liner}\n")
+    for other in roster_names():
+        if other != name:
+            box = TEAM / other / "inbox"
+            box.mkdir(parents=True, exist_ok=True)
+            (box / f"{dt.datetime.now():%Y%m%d-%H%M%S}-from-{caller()}-new-hire-{name}.md").write_text(
+                f"# New hire: {name}\n\nFrom: {caller()}\nSent: {now()}\n\n"
+                f"{title_name} joined as {a.title}: {a.one_liner}\n"
+                f"Hand them matching work with `acc send {name}` or a card owned by @{name}.\n")
+    print(f"hired {name}: desk at team/{name}/, agent at .claude/agents/{name}.md, roster updated")
+    if a.clock:
+        print("run 'acc clocks install' to put the new clocks on the schedule")
+
+
+def cmd_playbook(a: argparse.Namespace) -> None:
+    require_employee(a.name)
+    if caller() not in ("you", "harper", a.name):
+        die(f"you can file playbooks on your own desk; ask harper to file one for {a.name}")
+    body = Path(a.body_file).read_text() if a.body_file else (a.body or "")
+    if not body.strip():
+        die("playbook needs --body or --body-file")
+    path = TEAM / a.name / "playbooks" / f"{slug(a.title)}.md"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    existed = path.exists()
+    path.write_text(f"# {a.title}\n\n{body.strip()}\n")
+    print(f"{'updated' if existed else 'filed'} playbook {path.relative_to(HOME)}")
+
+
+# ----------------------------------------------------------------- clocks ---
+
+def clock_lines() -> list[tuple[str, str, str]]:
+    out = []
+    for name in roster_names():
+        f = TEAM / name / "clock.tsv"
+        if not f.exists():
+            continue
+        for line in f.read_text().splitlines():
+            if not line.strip() or line.lstrip().startswith("#"):
+                continue
+            cron, _, task = line.partition("\t")
+            if len(cron.split()) != 5 or not task.strip():
+                print(f"acc: skipping bad clock line in {f.relative_to(HOME)}: {line!r}", file=sys.stderr)
+                continue
+            out.append((name, cron.strip(), task.strip()))
+    return out
+
+
+def render_block() -> str:
+    # cron turns a bare % into a newline, so escape it inside commands
+    q = lambda s: "'" + s.replace("'", "'\\''").replace("%", "\\%") + "'"
+    home = str(HOME)
+    path = f"{Path.home()}/.local/bin:/usr/local/bin:/usr/bin:/bin"
+    lines = [CRON_BEGIN, f"# generated by acc clocks install on {now()}; edit team/*/clock.tsv instead",
+             f"PATH={path}"]
+    for name, cron, task in clock_lines():
+        lines.append(f"{cron} {q(home + '/scripts/wake.sh')} {name} {q(task)}")
+    lines += [
+        f"*/30 * * * * {q(home + '/scripts/acc')} dispatch >> {q(home + '/logs/dispatch.log')} 2>&1",
+        f"45 7 * * * {q(home + '/scripts/acc')} digest > /dev/null 2>&1",
+        f"50 23 * * * {q(home + '/scripts/sync.sh')} >> {q(home + '/logs/sync.log')} 2>&1",
+        CRON_END,
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def current_crontab() -> str:
+    r = subprocess.run(["crontab", "-l"], capture_output=True, text=True)
+    return r.stdout if r.returncode == 0 else ""
+
+
+def strip_block(tab: str) -> str:
+    return re.sub(rf"{re.escape(CRON_BEGIN)}.*?{re.escape(CRON_END)}\n?", "", tab, flags=re.S)
+
+
+def cmd_clocks(a: argparse.Namespace) -> None:
+    if a.op == "render":
+        print(render_block(), end="")
+        return
+    if caller() != "you":
+        die("only you can change the schedule")
+    if not shutil.which("crontab"):
+        die("crontab not found; install cron (apt install cron)")
+    rest = strip_block(current_crontab())
+    new = rest if a.op == "remove" else (rest.rstrip("\n") + "\n\n" if rest.strip() else "") + render_block()
+    if a.dry_run:
+        print(new, end="")
+        return
+    subprocess.run(["crontab", "-"], input=new, text=True, check=True)
+    print("clocks removed" if a.op == "remove" else f"clocks installed ({len(clock_lines())} shifts + dispatch, digest, sync)")
+
+
+# ------------------------------------------------------- dispatch / digest ---
+
+def cmd_dispatch(a: argparse.Namespace) -> None:
+    """Run each approved card once, letting its owner use exactly its action."""
+    for card in all_cards():
+        if card.get("status") != "approved" or card.get("executed"):
+            continue
+        owner, cid = card.get("owner", ""), card["id"]
+        if owner not in roster_names():
+            print(f"{now()} card {cid}: owner {owner!r} not on roster, skipped")
+            continue
+        print(f"{now()} card {cid}: waking {owner} to carry out the approved work")
+        if a.dry_run:
+            continue
+        card["executed"] = now()
+        append_log(card, "dispatched for execution")
+        write_card(card)
+        env = dict(os.environ, ACC_APPROVED_TOOLS=card.get("action", ""), ACC_APPROVED_CARD=cid)
+        task = (f"Card {cid} was approved by the owner. Read it with `python3 scripts/acc board show {cid}`, "
+                f"carry out exactly what it describes (nothing more), then move it to done with a note of what you did.")
+        subprocess.run([str(HOME / "scripts" / "wake.sh"), owner, task], env=env)
+
+
+def cmd_digest(a: argparse.Namespace) -> None:
+    cards = all_cards()
+    lines = [f"# Command Center digest ({now()})", ""]
+    review = [c for c in cards if c.get("status") == "review"]
+    lines.append(f"## Waiting for your yes ({len(review)})")
+    lines += [f"- {c['id']} @{c.get('owner')}: {c.get('title')}" + (f" [action: {c['action']}]" if c.get("action") else "")
+              for c in review] or ["- nothing"]
+    lines += ["", "## Who is on what"]
+    for name in roster_names():
+        mine = [c for c in cards if c.get("owner") == name and c.get("status") in ("todo", "doing")]
+        unread = len(list((TEAM / name / "inbox").glob("*.md")))
+        lines.append(f"- **{name}**: {len(mine)} open card(s), {unread} unread note(s)"
+                     + "".join(f"\n  - {c['status']}: {c.get('title')}" for c in mine))
+    yesterday = (dt.date.today() - dt.timedelta(days=1)).isoformat()
+    done = [c for c in cards if c.get("status") == "done" and c.get("updated", "") >= yesterday]
+    lines += ["", f"## Done since yesterday ({len(done)})"]
+    lines += [f"- {c['id']} @{c.get('owner')}: {c.get('title')}" for c in done] or ["- nothing"]
+    text = "\n".join(lines) + "\n"
+    (HOME / "board" / "DIGEST.md").write_text(text)
+    print(text, end="")
+
+
+def cmd_doctor(a: argparse.Namespace) -> None:
+    ok = True
+
+    def check(cond: bool, good: str, bad: str) -> None:
+        nonlocal ok
+        print(("  ok   " if cond else "  FAIL ") + (good if cond else bad))
+        ok &= cond
+
+    print(f"AI Command Center at {HOME}")
+    check(bool(shutil.which("claude")), "claude CLI found", "claude CLI not on PATH")
+    check(bool(shutil.which("flock")), "flock found", "flock missing (apt install util-linux)")
+    names = roster_names()
+    check(bool(names), f"roster: {', '.join(names)}", "roster is empty")
+    for n in names:
+        check((AGENTS / f"{n}.md").exists(), f"{n}: agent file", f"{n}: missing .claude/agents/{n}.md")
+        check((TEAM / n / "ROLE.md").exists(), f"{n}: desk", f"{n}: missing team/{n}/ROLE.md")
+        try:
+            json.loads((TEAM / n / "fence.json").read_text())
+            check(True, f"{n}: fence", "")
+        except Exception as e:  # noqa: BLE001
+            check(False, "", f"{n}: fence.json unreadable ({e})")
+    check(bool(clock_lines()), f"{len(clock_lines())} clock(s) defined", "no clocks defined")
+    vault = os.environ.get("ACC_VAULT_PATH", "/srv/brain")
+    inside = str(HOME).startswith(vault.rstrip("/") + "/") or str(HOME) == vault
+    check(not inside, f"separate from vault ({vault})", f"command center is INSIDE the vault ({vault})")
+    if os.path.isdir(vault):
+        check(not os.access(vault, os.W_OK), f"vault is read-only to {os.environ.get('USER', 'this user')}",
+              f"this user can write to the vault at {vault} (fence still blocks employees)")
+    tab = current_crontab() if shutil.which("crontab") else ""
+    check(CRON_BEGIN in tab, "clocks installed in crontab", "clocks not installed (run: acc clocks install)")
+    sys.exit(0 if ok else 1)
+
+
+# ------------------------------------------------------------------- main ---
+
+def main() -> None:
+    p = argparse.ArgumentParser(prog="acc", description="AI Command Center control script")
+    sub = p.add_subparsers(dest="cmd", required=True)
+
+    b = sub.add_parser("board", help="the shared board")
+    b.add_argument("op", choices=["list", "add", "move", "show", "approve"])
+    b.add_argument("id", nargs="?")
+    b.add_argument("to_status", nargs="?", metavar="STATUS")
+    b.add_argument("--status", help="filter (list) or starting status (add)")
+    b.add_argument("--title")
+    b.add_argument("--owner")
+    b.add_argument("--body")
+    b.add_argument("--action", help="exact tool name this card needs approval to use")
+    b.add_argument("--note")
+    b.set_defaults(func=cmd_board)
+
+    s = sub.add_parser("send", help="leave a note in a teammate's inbox")
+    s.add_argument("to")
+    s.add_argument("--subject", required=True)
+    s.add_argument("--body", required=True)
+    s.set_defaults(func=cmd_send)
+
+    i = sub.add_parser("inbox", help="read (or file) an employee's notes")
+    i.add_argument("name")
+    i.add_argument("--done", help="note filename to file as read")
+    i.set_defaults(func=cmd_inbox)
+
+    r = sub.add_parser("roster", help="print the roster")
+    r.set_defaults(func=lambda a: print(ROSTER.read_text()))
+
+    n = sub.add_parser("new-desk", help="hire: build a desk, agent and roster line")
+    n.add_argument("name")
+    n.add_argument("--title", required=True)
+    n.add_argument("--one-liner", required=True)
+    n.add_argument("--owns", action="append", help="one responsibility (repeatable)")
+    n.add_argument("--clock", action="append", help='"m h dom mon dow|task" (repeatable)')
+    n.set_defaults(func=cmd_new_desk)
+
+    pb = sub.add_parser("playbook", help="file a playbook onto a desk")
+    pb.add_argument("name")
+    pb.add_argument("--title", required=True)
+    pb.add_argument("--body")
+    pb.add_argument("--body-file")
+    pb.set_defaults(func=cmd_playbook)
+
+    c = sub.add_parser("clocks", help="render or install the schedule into crontab")
+    c.add_argument("op", choices=["render", "install", "remove"])
+    c.add_argument("--dry-run", action="store_true")
+    c.set_defaults(func=cmd_clocks)
+
+    d = sub.add_parser("dispatch", help="run approved cards")
+    d.add_argument("--dry-run", action="store_true")
+    d.set_defaults(func=cmd_dispatch)
+
+    sub.add_parser("digest", help="write board/DIGEST.md").set_defaults(func=cmd_digest)
+    sub.add_parser("doctor", help="check the install").set_defaults(func=cmd_doctor)
+
+    a = p.parse_args()
+    if a.cmd == "board" and a.op in ("move", "show", "approve") and not a.id:
+        die(f"board {a.op} needs a card ID")
+    if a.cmd == "board" and a.op == "move" and not a.to_status:
+        die("board move needs ID and STATUS")
+    a.func(a)
+
+
+if __name__ == "__main__":
+    main()

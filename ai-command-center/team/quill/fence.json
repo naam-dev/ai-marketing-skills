@@ -1,0 +1,8 @@
+{
+  "write": [
+    "team/quill/**",
+    "team/*/inbox/*.md",
+    "shared/memory/proposals/**"
+  ],
+  "note": "Paths this employee may write with Write/Edit. Everything else is read-only to it."
+}

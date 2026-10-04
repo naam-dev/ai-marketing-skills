@@ -1,0 +1,3 @@
+# cron (server time)	task
+0 9 * * 1-5	Morning inbox sort: triage everything new since your last shift, label it, draft replies for anything urgent, and raise review cards to send them.
+30 16 * * 1-5	End-of-day sweep: find anything still unanswered from today, check tomorrow's calendar, and leave the owner one review card titled 'Tomorrow' with what needs attention.
