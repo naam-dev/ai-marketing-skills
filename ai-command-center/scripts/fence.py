@@ -7,8 +7,8 @@ deny. Rules, in order:
 1. Nobody touches the vault (ACC_VAULT_PATH, default /srv/brain) from here.
 2. Outward or destructive actions (send, publish, delete, spend, ...) need
    your yes. In your own interactive session that is a normal prompt. For an
-   employee on the clock it is a hard deny with instructions to raise a review
-   card, unless `acc dispatch` approved exactly that tool for this run.
+   employee on the clock it is always a hard deny with instructions to raise a
+   review card; you carry approved cards out yourself in /review.
 3. Employees may only write files their fence.json lists, and may only run
    the read-only shell commands and the shared `acc` script.
 
@@ -125,15 +125,6 @@ def gated_mcp(tool: str) -> bool:
     return bool(set(re.split(r"[^a-z0-9]+", action)) & GATED_VERBS)
 
 
-def approved_for_this_run(tool: str) -> bool:
-    """dispatch passes the card's --action; match it exactly, or by tool name
-    when the card gave only the short name (e.g. send_message)."""
-    for t in (x.strip() for x in os.environ.get("ACC_APPROVED_TOOLS", "").split(",")):
-        if t and (tool == t or ("__" not in t and tool.split("__")[-1] == t)):
-            return True
-    return False
-
-
 SHELL_OPS = {"&&", "||", ";", "|", "&", ";;", "|&"}
 
 
@@ -186,8 +177,6 @@ def main() -> None:
 
     # 2. Outward / destructive actions need a yes.
     if gated_mcp(tool):
-        if me and approved_for_this_run(tool):
-            decide("allow", f"approved on card {os.environ.get('ACC_APPROVED_CARD', '?')}")
         if on_clock:
             decide("deny",
                    f"{tool} needs the owner's yes. Prepare everything, then raise a review card: "

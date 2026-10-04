@@ -1,0 +1,14 @@
+# Extra tools this employee may use on a scheduled shift, one per line.
+# Shifts run in dontAsk mode: anything not allowed here or in the shared list
+# (scripts/wake.sh) is refused without asking. Read-only and draft tools only.
+# Sending, publishing, spending and deleting are never allowed on shift,
+# even if listed: the fence blocks them and they go to /review instead.
+#
+# Find exact names with: claude mcp list, then /mcp in a session.
+# Off until you've watched a few supervised shifts. Then uncomment, using the
+# exact names from your server:
+# mcp__claude_ai_Gmail__search_threads
+# mcp__claude_ai_Gmail__get_thread
+# mcp__claude_ai_Gmail__get_message
+# mcp__claude_ai_Gmail__create_draft
+# mcp__claude_ai_Google_Calendar__list_events

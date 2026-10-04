@@ -9,14 +9,14 @@ work, hire, and install the clocks. Stdlib only.
     acc board add --title T --owner NAME [--status S] [--body B] [--action TOOL]
     acc board move ID STATUS [--note N]
     acc board show ID
-    acc board approve ID            (you only)
+    acc board approve ID            (you only; you then carry it out in /review)
     acc send TO --subject S --body B
     acc inbox NAME [--done FILE]
     acc roster
     acc new-desk NAME --title T --one-liner L [--clock "CRON|TASK" ...]
     acc playbook NAME --title T (--body B | --body-file F)
     acc clocks render | install [--dry-run] | remove
-    acc dispatch [--dry-run]
+    acc notion setup --parent PAGE_ID | sync
     acc digest
     acc doctor
 """
@@ -30,6 +30,8 @@ import re
 import shutil
 import subprocess
 import sys
+import urllib.error
+import urllib.request
 from pathlib import Path
 
 HOME = Path(os.environ.get("ACC_HOME") or Path(__file__).resolve().parent.parent)
@@ -52,7 +54,7 @@ def die(msg: str, code: int = 1) -> None:
 
 
 def now() -> str:
-    return dt.datetime.now().strftime("%Y-%m-%d %H:%M")
+    return dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
 def caller() -> str:
@@ -96,7 +98,7 @@ def parse_card(path: Path) -> dict:
 
 def write_card(meta: dict) -> None:
     keys = ["id", "title", "owner", "status", "action", "approved",
-            "executed", "created", "updated"]
+            "created", "updated", "notion", "notion_status", "notion_pushed"]
     head = "\n".join(f"{k}: {meta[k]}" for k in keys if meta.get(k))
     meta["path"].write_text(f"---\n{head}\n---\n{meta['body']}")
 
@@ -176,7 +178,6 @@ def cmd_board(a: argparse.Namespace) -> None:
         card["status"] = to
         card["updated"] = now()
         card.pop("approved", None)
-        card.pop("executed", None)
         append_log(card, f"moved to {to}" + (f": {a.note}" if a.note else ""))
         write_card(card)
         print(f"card {card['id']} -> {to}")
@@ -192,8 +193,8 @@ def cmd_board(a: argparse.Namespace) -> None:
         card["updated"] = now()
         append_log(card, "approved" + (f": {a.note}" if a.note else ""))
         write_card(card)
-        what = f" The next dispatch lets @{card['owner']} run {card['action']} once." if card.get("action") else ""
-        print(f"card {card['id']} approved.{what}")
+        print(f"card {card['id']} approved. Carry it out in your own session (/review); "
+              f"scheduled shifts never send, publish, spend or delete.")
 
 
 # ---------------------------------------------------------------- inboxes ---
@@ -265,9 +266,21 @@ Stay inside your desk. Never send, publish, spend or delete directly: raise a re
 """
 
 
+TOOLS_TMPL = """# Extra tools this employee may use on a scheduled shift, one per line.
+# Shifts run in dontAsk mode: anything not allowed here or in the shared list
+# (scripts/wake.sh) is refused without asking. Read-only and draft tools only.
+# Sending, publishing, spending and deleting are never allowed on shift,
+# even if listed: the fence blocks them and they go to /review instead.
+#
+# Find exact names with: claude mcp list, then /mcp in a session.
+# Example (uncomment after a few supervised shifts):
+# mcp__claude_ai_Gmail__search_threads
+"""
+
+
 def cmd_new_desk(a: argparse.Namespace) -> None:
-    if caller() not in ("you", "harper"):
-        die("only you or harper (hiring) can add employees")
+    if caller() != "you":
+        die("hiring happens in the owner's session (/hire); on shift, propose the hire on a review card")
     name = a.name.lower()
     if not NAME_RE.match(name):
         die("name must be lowercase letters, digits or dashes (2-31 chars)")
@@ -293,6 +306,7 @@ def cmd_new_desk(a: argparse.Namespace) -> None:
         "write": [f"team/{name}/**", "team/*/inbox/*.md", "shared/memory/proposals/**"],
         "note": "Paths this employee may write with Write/Edit. Everything else is read-only to it.",
     }, indent=2) + "\n")
+    (desk / "tools.txt").write_text(TOOLS_TMPL)
     AGENTS.mkdir(parents=True, exist_ok=True)
     (AGENTS / f"{name}.md").write_text(AGENT_TMPL.format(
         name=name, title_name=title_name, title=a.title, one_liner=a.one_liner))
@@ -354,7 +368,7 @@ def render_block() -> str:
     for name, cron, task in clock_lines():
         lines.append(f"{cron} {q(home + '/scripts/wake.sh')} {name} {q(task)}")
     lines += [
-        f"*/30 * * * * {q(home + '/scripts/acc')} dispatch >> {q(home + '/logs/dispatch.log')} 2>&1",
+        f"*/10 * * * * {q(home + '/scripts/acc')} notion sync >> {q(home + '/logs/notion.log')} 2>&1",
         f"45 7 * * * {q(home + '/scripts/acc')} digest > /dev/null 2>&1",
         f"50 23 * * * {q(home + '/scripts/sync.sh')} >> {q(home + '/logs/sync.log')} 2>&1",
         CRON_END,
@@ -385,31 +399,168 @@ def cmd_clocks(a: argparse.Namespace) -> None:
         print(new, end="")
         return
     subprocess.run(["crontab", "-"], input=new, text=True, check=True)
-    print("clocks removed" if a.op == "remove" else f"clocks installed ({len(clock_lines())} shifts + dispatch, digest, sync)")
+    print("clocks removed" if a.op == "remove" else f"clocks installed ({len(clock_lines())} shifts + Notion sync, digest, nightly snapshot)")
 
 
-# ------------------------------------------------------- dispatch / digest ---
 
-def cmd_dispatch(a: argparse.Namespace) -> None:
-    """Run each approved card once, letting its owner use exactly its action."""
-    for card in all_cards():
-        if card.get("status") != "approved" or card.get("executed"):
+# ----------------------------------------------------------------- notion ---
+# The board mirrored to a Notion database, so you can see and steer the team
+# from your phone. Plain API calls, no AI: Claude never touches Notion on a
+# shift. A Status you change in Notion (anything other than what acc last
+# pushed) is applied to the card on the next sync:
+#   Status -> approved   approves a review card (you still carry it out in /review)
+#   Status -> todo       sends a review card back
+#   a new page with an Owner and no Card number becomes a new card
+
+NOTION_API = os.environ.get("ACC_NOTION_API", "https://api.notion.com/v1")
+NOTION_VERSION = "2022-06-28"
+NOTION_CFG = HOME / "board" / "notion.json"
+
+
+def notion(method: str, path: str, body: dict | None = None) -> dict:
+    token = os.environ.get("NOTION_TOKEN", "").strip()
+    if not token:
+        die("NOTION_TOKEN is not set in .env (create an internal integration at notion.so/my-integrations)")
+    req = urllib.request.Request(
+        NOTION_API + path, method=method,
+        data=json.dumps(body).encode() if body is not None else None,
+        headers={"Authorization": f"Bearer {token}", "Notion-Version": NOTION_VERSION,
+                 "Content-Type": "application/json"})
+    try:
+        with urllib.request.urlopen(req, timeout=30) as r:
+            return json.loads(r.read() or b"{}")
+    except urllib.error.HTTPError as e:
+        die(f"Notion {method} {path}: {e.code} {e.read().decode(errors='replace')[:300]}")
+    except urllib.error.URLError as e:
+        die(f"Notion unreachable: {e.reason}")
+    return {}
+
+
+def _text(prop: dict) -> str:
+    items = prop.get("title") or prop.get("rich_text") or []
+    return "".join(t.get("plain_text", "") for t in items).strip()
+
+
+def _rt(text: str) -> list:
+    return [{"type": "text", "text": {"content": text[:2000]}}] if text else []
+
+
+def notion_props(card: dict) -> dict:
+    return {
+        "Name": {"title": _rt(card.get("title", ""))},
+        "Card": {"rich_text": _rt(card["id"])},
+        "Owner": {"select": {"name": card["owner"]} if card.get("owner") else None},
+        "Status": {"select": {"name": card.get("status", "todo")}},
+        "Action": {"rich_text": _rt(card.get("action", ""))},
+        "Updated": {"date": {"start": card.get("updated", now()).replace(" ", "T")}},
+    }
+
+
+def notion_body(card: dict) -> list:
+    text = card["body"].split("\n## Log\n")[0].strip() or "(no details)"
+    return [{"object": "block", "type": "paragraph", "paragraph": {"rich_text": _rt(chunk)}}
+            for chunk in [text[i:i + 1900] for i in range(0, min(len(text), 9500), 1900)]]
+
+
+def cmd_notion(a: argparse.Namespace) -> None:
+    if caller() != "you":
+        die("Notion is the owner's dashboard; employees use the board through acc")
+    if a.op == "setup":
+        if not a.parent:
+            die("notion setup needs --parent <page id or URL> (a page shared with your integration)")
+        parent = re.sub(r"-", "", a.parent.rstrip("/").split("-")[-1].split("?")[0])[-32:]
+        db = notion("POST", "/databases", {
+            "parent": {"type": "page_id", "page_id": parent},
+            "title": _rt("AI Command Center board"),
+            "properties": {
+                "Name": {"title": {}},
+                "Card": {"rich_text": {}},
+                "Owner": {"select": {"options": [{"name": n} for n in roster_names()]}},
+                "Status": {"select": {"options": [
+                    {"name": "todo", "color": "gray"}, {"name": "doing", "color": "blue"},
+                    {"name": "review", "color": "orange"}, {"name": "approved", "color": "green"},
+                    {"name": "done", "color": "default"}]}},
+                "Action": {"rich_text": {}},
+                "Updated": {"date": {}},
+            }})
+        NOTION_CFG.write_text(json.dumps({"database_id": db["id"], "url": db.get("url", "")}, indent=2) + "\n")
+        print(f"created Notion board: {db.get('url', db['id'])}\nnow run: acc notion sync")
+        return
+
+    if not NOTION_CFG.exists():
+        print("acc: Notion not set up yet (acc notion setup --parent <page>); skipping")
+        return
+    db_id = json.loads(NOTION_CFG.read_text())["database_id"]
+    if a.op == "link":
+        print(json.loads(NOTION_CFG.read_text()).get("url") or db_id)
+        return
+
+    pages, cursor = [], None
+    while True:
+        res = notion("POST", f"/databases/{db_id}/query", {"start_cursor": cursor} if cursor else {})
+        pages += res.get("results", [])
+        if not res.get("has_more"):
+            break
+        cursor = res.get("next_cursor")
+    by_card = {_text(p["properties"].get("Card", {})): p for p in pages if not p.get("archived")}
+    pulled = pushed = created = 0
+
+    # 1. pages you added in Notion become cards
+    for card_no, page in list(by_card.items()):
+        if card_no:
             continue
-        owner, cid = card.get("owner", ""), card["id"]
-        if owner not in roster_names():
-            print(f"{now()} card {cid}: owner {owner!r} not on roster, skipped")
+        props = page["properties"]
+        title = _text(props.get("Name", {}))
+        owner = ((props.get("Owner") or {}).get("select") or {}).get("name", "")
+        if not title or owner not in roster_names():
             continue
-        print(f"{now()} card {cid}: waking {owner} to carry out the approved work")
-        if a.dry_run:
-            continue
-        card["executed"] = now()
-        append_log(card, "dispatched for execution")
+        cid = next_id()
+        card = {"id": cid, "title": title, "owner": owner, "status": "todo", "created": now(),
+                "updated": now(), "path": CARDS / f"{cid}-{slug(title)}.md",
+                "body": "\nAdded from Notion. Details are on the Notion page.\n", "notion": page["id"]}
+        append_log(card, "created from Notion")
+        notion("PATCH", f"/pages/{page['id']}", {"properties": notion_props(card)})
+        card["notion_status"], card["notion_pushed"] = card["status"], card["updated"]
         write_card(card)
-        env = dict(os.environ, ACC_APPROVED_TOOLS=card.get("action", ""), ACC_APPROVED_CARD=cid)
-        task = (f"Card {cid} was approved by the owner. Read it with `python3 scripts/acc board show {cid}`, "
-                f"carry out exactly what it describes (nothing more), then move it to done with a note of what you did.")
-        subprocess.run([str(HOME / "scripts" / "wake.sh"), owner, task], env=env)
+        by_card[cid] = page
+        created += 1
 
+    # 2. reconcile every card
+    for card in all_cards():
+        page = by_card.get(card["id"])
+        changed = False
+        if page:
+            props = page["properties"]
+            want = ((props.get("Status") or {}).get("select") or {}).get("name", "")
+            have = card.get("status")
+            # only a status that differs from what we last pushed is an owner edit
+            if want and want != card.get("notion_status") and want != have:
+                if want == "approved" and have == "review":
+                    card["status"], card["approved"] = "approved", now()
+                    append_log(card, "approved in Notion")
+                elif want == "approved":
+                    append_log(card, f"Notion tried to approve from {have}; ignored (only review cards can be approved)")
+                elif want in STATUSES:
+                    card["status"] = want
+                    card.pop("approved", None)
+                    append_log(card, f"moved to {want} in Notion" + (" (sent back)" if have == "review" else ""))
+                card["updated"] = now()
+                changed = True
+                pulled += 1
+        if page and not changed and card.get("notion_pushed") == card.get("updated"):
+            continue  # nothing new either way
+        body = {"properties": notion_props(card)}
+        if page:
+            notion("PATCH", f"/pages/{page['id']}", body)
+        else:
+            body.update({"parent": {"database_id": db_id}, "children": notion_body(card)})
+            card["notion"] = notion("POST", "/pages", body).get("id", "")
+        card["notion_status"], card["notion_pushed"] = card["status"], card["updated"]
+        write_card(card)
+        pushed += 1
+    print(f"{now()} notion sync: {created} new from Notion, {pulled} change(s) pulled, {pushed} card(s) pushed")
+
+# ---------------------------------------------------------------- digest ---
 
 def cmd_digest(a: argparse.Namespace) -> None:
     cards = all_cards()
@@ -442,8 +593,16 @@ def cmd_doctor(a: argparse.Namespace) -> None:
         ok &= cond
 
     print(f"AI Command Center at {HOME}")
-    check(bool(shutil.which("claude")), "claude CLI found", "claude CLI not on PATH")
+    claude = os.environ.get("CLAUDE_BIN") or shutil.which("claude")
+    check(bool(claude) and os.access(claude, os.X_OK), f"claude CLI: {claude}", "claude CLI not found (set CLAUDE_BIN in .env)")
     check(bool(shutil.which("flock")), "flock found", "flock missing (apt install util-linux)")
+    try:
+        trusted = json.loads((Path.home() / ".claude.json").read_text()).get("projects", {}) \
+            .get(str(HOME), {}).get("hasTrustDialogAccepted")
+    except (OSError, ValueError):
+        trusted = False
+    check(bool(trusted), "folder trusted (fence hook loads on shifts)",
+          f"folder not trusted yet: cd {HOME} && claude, accept the prompt (shifts won't start until then)")
     names = roster_names()
     check(bool(names), f"roster: {', '.join(names)}", "roster is empty")
     for n in names:
@@ -467,6 +626,21 @@ def cmd_doctor(a: argparse.Namespace) -> None:
 
 
 # ------------------------------------------------------------------- main ---
+
+def load_env() -> None:
+    """cron runs acc directly, so read .env the same way wake.sh does."""
+    env = HOME / ".env"
+    if not env.exists():
+        return
+    try:
+        lines = env.read_text().splitlines()
+    except OSError:
+        return
+    for line in lines:
+        k, sep, v = line.strip().partition("=")
+        if sep and k and not k.startswith("#"):
+            os.environ.setdefault(k.strip(), v.strip().strip("'\""))
+
 
 def main() -> None:
     p = argparse.ArgumentParser(prog="acc", description="AI Command Center control script")
@@ -518,13 +692,16 @@ def main() -> None:
     c.add_argument("--dry-run", action="store_true")
     c.set_defaults(func=cmd_clocks)
 
-    d = sub.add_parser("dispatch", help="run approved cards")
-    d.add_argument("--dry-run", action="store_true")
-    d.set_defaults(func=cmd_dispatch)
+
+    no = sub.add_parser("notion", help="mirror the board to a Notion database")
+    no.add_argument("op", choices=["setup", "sync", "link"])
+    no.add_argument("--parent", help="setup: Notion page (id or URL) to create the board under")
+    no.set_defaults(func=cmd_notion)
 
     sub.add_parser("digest", help="write board/DIGEST.md").set_defaults(func=cmd_digest)
     sub.add_parser("doctor", help="check the install").set_defaults(func=cmd_doctor)
 
+    load_env()
     a = p.parse_args()
     if a.cmd == "board" and a.op in ("move", "show", "approve") and not a.id:
         die(f"board {a.op} needs a card ID")
