@@ -12,6 +12,8 @@
 #   --no-cron      don't install the clocks yet
 #   --update       copy new scripts/hooks/skills into an existing install; never
 #                  touches company/, shared/, team/ or board/
+#   --profile DIR  on a fresh install, lay a business profile over the template
+#                  (company/, shared/, team/, .claude/agents/, board/cards/)
 #   --yes          don't ask before installing Claude Code / copying login
 #
 # Why a separate unix user: the employees run with permission prompts off (the
@@ -25,6 +27,7 @@ VAULT=/srv/brain
 CRON=1
 UPDATE=0
 YES=0
+PROFILE=""
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --target) TARGET="$2"; shift 2 ;;
@@ -32,8 +35,9 @@ while [[ $# -gt 0 ]]; do
     --vault)  VAULT="$2"; shift 2 ;;
     --no-cron) CRON=0; shift ;;
     --update) UPDATE=1; shift ;;
+    --profile) PROFILE="$(realpath "$2")"; shift 2 ;;
     --yes|-y) YES=1; shift ;;
-    -h|--help) sed -n '2,22p' "$0"; exit 0 ;;
+    -h|--help) sed -n '2,24p' "$0"; exit 0 ;;
     *) echo "unknown option: $1" >&2; exit 2 ;;
   esac
 done
@@ -99,6 +103,7 @@ if [[ -e "$TARGET/company/roster.md" ]]; then
   if [[ $UPDATE == 1 ]]; then
     copy_code
     ok "updated scripts, hooks and skills (your team, company files and board untouched)"
+    [[ -n "$PROFILE" ]] && warn "--profile only applies to a fresh install; ignored on --update"
   else
     echo "$TARGET already has a command center. Use --update to refresh scripts only."; exit 1
   fi
@@ -108,6 +113,13 @@ else
   rm -rf "$TARGET/logs" "$TARGET/tests" "$TARGET"/scripts/__pycache__ && mkdir -p "$TARGET/logs"
   [[ -f "$TARGET/.env" ]] || cp "$TARGET/.env.example" "$TARGET/.env"
   ok "copied template into $TARGET"
+  if [[ -n "$PROFILE" ]]; then
+    [[ -f "$PROFILE/company/roster.md" ]] || { echo "--profile $PROFILE has no company/roster.md"; exit 1; }
+    for d in company shared team .claude/agents board/cards; do
+      if [[ -d "$PROFILE/$d" ]]; then mkdir -p "$TARGET/$d"; cp -a "$PROFILE/$d/." "$TARGET/$d/"; fi
+    done
+    ok "applied profile from $PROFILE"
+  fi
 fi
 sed -i "s#^ACC_VAULT_PATH=.*#ACC_VAULT_PATH=$VAULT#" "$TARGET/.env" 2>/dev/null || true
 chmod +x "$TARGET"/scripts/*
