@@ -26,6 +26,8 @@ class CommandCenter(unittest.TestCase):
         self.home = self.tmp / "acc"
         shutil.copytree(TEMPLATE, self.home, ignore=shutil.ignore_patterns("tests", "logs", "__pycache__"))
         (self.home / "logs").mkdir()
+        for card in (self.home / "board" / "cards").glob("*.md"):
+            card.unlink()                                               # every test starts on an empty board
         self.vault = self.tmp / "brain"
         (self.vault / "vault").mkdir(parents=True)
 
