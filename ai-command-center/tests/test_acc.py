@@ -139,6 +139,12 @@ class TestFence(CommandCenter):
         self.assertEqual(self.fence("Write", {"file_path": f}), "deny")     # even for the owner
         self.assertEqual(self.fence("Bash", {"command": f"cat {f}"}, "quill"), "deny")
 
+    def test_vault_connector_is_off_limits(self) -> None:
+        for who in ("quill", ""):
+            for tool in ("mcp__claude_ai_HIT_TLI_VAULT__read_note", "mcp__claude_ai_HIT_TLI_VAULT__write_note"):
+                self.assertEqual(self.fence(tool, {}, who), "deny", (who, tool))
+        self.assertEqual(self.fence("mcp__claude_ai_Notion__notion-search", {}, "quill"), "allow")
+
     def test_shell_allowlist(self) -> None:
         ok = ['python3 scripts/acc board list --owner quill', 'ls team/quill',
               'python3 scripts/acc send nova --subject "a | b" --body "x > y"']

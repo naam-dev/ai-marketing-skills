@@ -169,7 +169,12 @@ def main() -> None:
     me = employee()
     on_clock = bool(os.environ.get("ACC_HEADLESS")) or bool(me)
 
-    # 1. The vault is a separate world.
+    # 1. The vault is a separate world: no file access, and no vault connector
+    #    either (a connector reaches the vault through Anthropic's servers, so
+    #    the OS-level block on /srv/brain does not stop it).
+    server = tool.split("__")[1] if tool.startswith("mcp__") and tool.count("__") >= 2 else ""
+    if server and re.search(os.environ.get("ACC_VAULT_CONNECTOR", "vault"), server, re.I):
+        decide("deny", "The main vault's connector is off-limits in the command center. Use it from another session.")
     paths = [inp.get(k) for k in ("file_path", "path", "notebook_path") if inp.get(k)]
     if tool in WRITE_TOOLS | READ_TOOLS and any(under(target_path(p), VAULT) for p in paths):
         if tool in WRITE_TOOLS or me:
