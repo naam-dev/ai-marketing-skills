@@ -1,0 +1,7 @@
+# Extra tools this employee may use on a scheduled shift, one per line.
+# Shifts run in dontAsk mode: anything not allowed here or in the shared list
+# (scripts/wake.sh) is refused without asking. Read-only and draft tools only.
+# Sending, publishing, spending and deleting are never allowed on shift,
+# even if listed: the fence blocks them and they go to /review instead.
+#
+# Find exact names with: claude mcp list, then /mcp in a session.

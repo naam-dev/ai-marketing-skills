@@ -1,0 +1,3 @@
+# cron (server time)	task
+0 7 * * *	Morning trend brief: research what moved overnight in the owner's markets and on TikTok, Instagram, LinkedIn and X, and write today's brief.
+0 14 * * 1,3,5	Draft three social posts from this week's briefs and raise each as a review card with the final caption and platform.

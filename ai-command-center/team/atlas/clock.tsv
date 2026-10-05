@@ -1,0 +1,2 @@
+# cron (server time)	task
+0 10 * * 1-5	Check your inbox and cards for proposal requests and draft any that are waiting. Chase proposals with no reply after 5 working days by drafting a follow-up for review.
